@@ -1,17 +1,18 @@
-package com.br.demo.dto.request;
+package com.br.demo.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import java.time.LocalDate;
+import java.util.UUID;
 
+
+@Getter
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
-@Setter
 public class ClienteResponseDTO {
+    private UUID id;
     private String nome;
     private String cpf;
     private LocalDate dateBirth;
