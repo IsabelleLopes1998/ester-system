@@ -10,14 +10,19 @@ import com.br.demo.model.HistoricoValor;
 import com.br.demo.model.Produto;
 import com.br.demo.repository.HistoricoValorRepository;
 import com.br.demo.repository.ProdutoRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
+@Service
 public class HistoricoValorService {
 
+    @Autowired
     private HistoricoValorRepository historicoValorRepository;
-
+    @Autowired
     private ProdutoRepository produtoRepository;
 
 
@@ -33,7 +38,7 @@ public class HistoricoValorService {
                 .orElse(null) ;
     }
 
-    public HistoricoValorResponseDTO criarHistorico(HistoricoValorRequestDTO historicoValorRequestDTO){
+    public HistoricoValorResponseDTO criarHistoricoValor(HistoricoValorRequestDTO historicoValorRequestDTO){
         Produto produto = produtoRepository.findById(historicoValorRequestDTO.getIdProduto())
                 .orElse(null);
         if(produto == null){
@@ -43,6 +48,28 @@ public class HistoricoValorService {
         historicoValor = historicoValorRepository.save(historicoValor);
 
         return new HistoricoValorResponseDTO(historicoValor.getId(), historicoValor.getData(), historicoValor.getValor(), historicoValor.getProduto().getNome());
+    }
+
+    public HistoricoValorResponseDTO atualizarHistoricoValor(Long id, HistoricoValorRequestDTO historicoValorRequestDTO){
+        Optional<HistoricoValor> optionalHistoricoValor = historicoValorRepository.findById(id);
+        if(optionalHistoricoValor.isPresent()){
+            HistoricoValor historicoValor = optionalHistoricoValor.get();
+
+            historicoValor.setData(historicoValorRequestDTO.getData());
+            historicoValor.setValor(historicoValorRequestDTO.getValor());
+
+            Produto produto = produtoRepository.findById(historicoValorRequestDTO.getIdProduto()).orElse(null);
+            if(produto != null){
+                historicoValor.setProduto(produto);
+            }
+            historicoValorRepository.save(historicoValor);
+            return new HistoricoValorResponseDTO(historicoValor.getId(), historicoValor.getData(), historicoValor.getValor(), historicoValor.getProduto().getNome());
+        }
+        return null;
+    }
+
+    public void excluirHistorico(Long id){
+        historicoValorRepository.deleteById(id);
     }
 }
 
