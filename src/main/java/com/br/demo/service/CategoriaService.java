@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -19,37 +20,56 @@ public class CategoriaService {
         this.categoriaRepository = categoriaRepository;
     }
 
-    public List<CategoriaResponseDTO> listarCategorias(){
+    public List<CategoriaResponseDTO> listarCategorias() {
         return categoriaRepository.findAll().stream()
-                .map(categoria -> new CategoriaResponseDTO(categoria.getId(), categoria.getNome(), categoria.getDescricao()))
+                .map(categoria -> new CategoriaResponseDTO(
+                        categoria.getId(),
+                        categoria.getNome(),
+                        categoria.getDescricao()))
                 .collect(Collectors.toList());
     }
 
-    public CategoriaResponseDTO buscarPorId(Long id){
+    public CategoriaResponseDTO buscarPorId(UUID id) {
         return categoriaRepository.findById(id)
-                .map(categoria -> new CategoriaResponseDTO(categoria.getId(), categoria.getNome(), categoria.getDescricao()))
+                .map(categoria -> new CategoriaResponseDTO(
+                        categoria.getId(),
+                        categoria.getNome(),
+                        categoria.getDescricao()))
                 .orElse(null);
     }
 
-    public CategoriaResponseDTO criarCategoria(CategoriaRequestDTO categoriaRequestDTO){
-        Categoria categoria = new Categoria(null, categoriaRequestDTO.getNome(), categoriaRequestDTO.getDescricao());
+    public CategoriaResponseDTO criarCategoria(CategoriaRequestDTO categoriaRequestDTO) {
+        Categoria categoria = Categoria.builder()
+                .nome(categoriaRequestDTO.getNome())
+                .descricao(categoriaRequestDTO.getDescricao())
+                .build();
+
         categoria = categoriaRepository.save(categoria);
 
-        return new CategoriaResponseDTO(categoria.getId(), categoria.getNome(), categoria.getDescricao());
+        return new CategoriaResponseDTO(
+                categoria.getId(),
+                categoria.getNome(),
+                categoria.getDescricao());
     }
 
-    public CategoriaResponseDTO atualizarCategoria(Long id, CategoriaRequestDTO categoriaRequestDTO){
+    public CategoriaResponseDTO atualizarCategoria(UUID id, CategoriaRequestDTO categoriaRequestDTO) {
         Optional<Categoria> optionalCategoria = categoriaRepository.findById(id);
-        if(optionalCategoria.isPresent()){
+
+        if (optionalCategoria.isPresent()) {
             Categoria categoria = optionalCategoria.get();
             categoria.setNome(categoriaRequestDTO.getNome());
             categoria.setDescricao(categoriaRequestDTO.getDescricao());
-            return new CategoriaResponseDTO(categoria.getId(), categoria.getNome(), categoria.getDescricao());
+            categoriaRepository.save(categoria); // 🔥 Atualiza no banco!
+
+            return new CategoriaResponseDTO(
+                    categoria.getId(),
+                    categoria.getNome(),
+                    categoria.getDescricao());
         }
-        return  null;
+        return null;
     }
 
-    public void excluirCategoria(Long id){
+    public void excluirCategoria(UUID id) {
         categoriaRepository.deleteById(id);
     }
 }
