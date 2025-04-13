@@ -1,9 +1,9 @@
 package com.br.demo.model;
 
 import jakarta.persistence.*;
-
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -19,18 +19,26 @@ public class Produto {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 60)
     private String nome;
 
-    @Column(nullable = false)
-    private double preco;
+    @Column(nullable = false, precision = 10, scale = 2)
+    private BigDecimal valor;
 
-    @Column(nullable = false, unique = true)
-    private String numeroSerie;
+    @Column(nullable = false)
+    private Integer quantidadeEstoque;
+
+    @ManyToOne
+    @JoinColumn(name = "id_usuario", nullable = false)
+    private Usuario usuario;
 
     @ManyToOne
     @JoinColumn(name = "id_categoria", nullable = false)
     private Categoria categoria;
+
+    @ManyToOne
+    @JoinColumn(name = "id_subcategoria")
+    private Subcategoria subcategoria;
 
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;

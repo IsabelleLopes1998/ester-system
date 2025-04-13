@@ -4,8 +4,12 @@ import com.br.demo.dto.request.ProdutoRequestDTO;
 import com.br.demo.dto.response.ProdutoResponseDTO;
 import com.br.demo.model.Categoria;
 import com.br.demo.model.Produto;
+import com.br.demo.model.Subcategoria;
+import com.br.demo.model.Usuario;
 import com.br.demo.repository.CategoriaRepository;
 import com.br.demo.repository.ProdutoRepository;
+import com.br.demo.repository.SubcategoriaRepository;
+import com.br.demo.repository.UsuarioRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,10 +22,19 @@ public class ProdutoService {
 
     private final ProdutoRepository produtoRepository;
     private final CategoriaRepository categoriaRepository;
+    private final SubcategoriaRepository subcategoriaRepository;
+    private final UsuarioRepository usuarioRepository;
 
-    public ProdutoService(ProdutoRepository produtoRepository, CategoriaRepository categoriaRepository) {
+    public ProdutoService(
+            ProdutoRepository produtoRepository,
+            CategoriaRepository categoriaRepository,
+            SubcategoriaRepository subcategoriaRepository,
+            UsuarioRepository usuarioRepository
+    ) {
         this.produtoRepository = produtoRepository;
         this.categoriaRepository = categoriaRepository;
+        this.subcategoriaRepository = subcategoriaRepository;
+        this.usuarioRepository = usuarioRepository;
     }
 
     public List<ProdutoResponseDTO> listarProdutos() {
@@ -29,8 +42,11 @@ public class ProdutoService {
                 .map(produto -> new ProdutoResponseDTO(
                         produto.getId(),
                         produto.getNome(),
-                        produto.getPreco(),
-                        produto.getCategoria().getNome()))
+                        produto.getValor(),
+                        produto.getQuantidadeEstoque(),
+                        produto.getCategoria().getNome(),
+                        produto.getSubcategoria() != null ? produto.getSubcategoria().getNome() : null
+                ))
                 .collect(Collectors.toList());
     }
 
@@ -39,24 +55,34 @@ public class ProdutoService {
                 .map(produto -> new ProdutoResponseDTO(
                         produto.getId(),
                         produto.getNome(),
-                        produto.getPreco(),
-                        produto.getCategoria().getNome()))
+                        produto.getValor(),
+                        produto.getQuantidadeEstoque(),
+                        produto.getCategoria().getNome(),
+                        produto.getSubcategoria() != null ? produto.getSubcategoria().getNome() : null
+                ))
                 .orElse(null);
     }
 
     public ProdutoResponseDTO criarProduto(ProdutoRequestDTO dto) {
-        Categoria categoria = categoriaRepository.findById(dto.getCategoriaId())
-                .orElse(null);
+        Categoria categoria = categoriaRepository.findById(dto.getIdCategoria()).orElse(null);
+        Usuario usuario = usuarioRepository.findById(dto.getIdUsuario()).orElse(null);
+        Subcategoria subcategoria = null;
 
-        if (categoria == null) {
+        if (dto.getIdSubcategoria() != null) {
+            subcategoria = subcategoriaRepository.findById(dto.getIdSubcategoria()).orElse(null);
+        }
+
+        if (categoria == null || usuario == null) {
             return null;
         }
 
         Produto produto = Produto.builder()
                 .nome(dto.getNome())
-                .preco(dto.getPreco())
-                .numeroSerie(dto.getNumeroSerie())
+                .valor(dto.getValor())
+                .quantidadeEstoque(dto.getQuantidadeEstoque())
+                .usuario(usuario)
                 .categoria(categoria)
+                .subcategoria(subcategoria)
                 .build();
 
         produto = produtoRepository.save(produto);
@@ -64,8 +90,11 @@ public class ProdutoService {
         return new ProdutoResponseDTO(
                 produto.getId(),
                 produto.getNome(),
-                produto.getPreco(),
-                produto.getCategoria().getNome());
+                produto.getValor(),
+                produto.getQuantidadeEstoque(),
+                produto.getCategoria().getNome(),
+                produto.getSubcategoria() != null ? produto.getSubcategoria().getNome() : null
+        );
     }
 
     public ProdutoResponseDTO atualizarProduto(UUID id, ProdutoRequestDTO dto) {
@@ -74,23 +103,30 @@ public class ProdutoService {
         if (optionalProduto.isPresent()) {
             Produto produto = optionalProduto.get();
             produto.setNome(dto.getNome());
-            produto.setPreco(dto.getPreco());
-            produto.setNumeroSerie(dto.getNumeroSerie());
+            produto.setValor(dto.getValor());
+            produto.setQuantidadeEstoque(dto.getQuantidadeEstoque());
 
-            Categoria categoria = categoriaRepository.findById(dto.getCategoriaId())
-                    .orElse(null);
+            Categoria categoria = categoriaRepository.findById(dto.getIdCategoria()).orElse(null);
+            Subcategoria subcategoria = null;
+            if (dto.getIdSubcategoria() != null) {
+                subcategoria = subcategoriaRepository.findById(dto.getIdSubcategoria()).orElse(null);
+            }
 
             if (categoria != null) {
                 produto.setCategoria(categoria);
             }
+            produto.setSubcategoria(subcategoria);
 
             produtoRepository.save(produto);
 
             return new ProdutoResponseDTO(
                     produto.getId(),
                     produto.getNome(),
-                    produto.getPreco(),
-                    produto.getCategoria().getNome());
+                    produto.getValor(),
+                    produto.getQuantidadeEstoque(),
+                    produto.getCategoria().getNome(),
+                    produto.getSubcategoria() != null ? produto.getSubcategoria().getNome() : null
+            );
         }
         return null;
     }
@@ -99,4 +135,3 @@ public class ProdutoService {
         produtoRepository.deleteById(id);
     }
 }
-

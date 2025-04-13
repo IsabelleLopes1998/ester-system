@@ -1,18 +1,20 @@
 package com.br.demo.dto.response;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
 @Getter
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 public class ProdutoResponseDTO {
     private UUID id;
     private String nome;
-    private double preco;
-    private String categoriaNome;
+    private BigDecimal valor;
+    private Integer quantidadeEstoque;
+    private String nomeCategoria;
+    private String nomeSubcategoria; // pode ser null
 }
-
