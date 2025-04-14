@@ -6,6 +6,7 @@ import com.br.demo.model.Cargo;
 import com.br.demo.model.Usuario;
 import com.br.demo.repository.CargoRepository;
 import com.br.demo.repository.UsuarioRepository;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -26,12 +27,14 @@ public class UsuarioService {
 
     public UsuarioResponseDTO criarUsuario(UsuarioRequestDTO dto) {
         Cargo cargo = cargoRepository.findById(dto.getIdCargo()).orElseThrow();
+        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        String encodedPassword = passwordEncoder.encode(dto.getSenha());
         Usuario usuario = Usuario.builder()
                 .nome(dto.getNome())
                 .cpf(dto.getCpf())
                 .dataNascimento(dto.getDataNascimento())
-                .login(dto.getLogin())
-                .senha(dto.getSenha())
+                .username(dto.getUsername())
+                .senha(encodedPassword)
                 .telefonePrincipal(dto.getTelefonePrincipal())
                 .telefoneSecundario(dto.getTelefoneSecundario())
                 .cargo(cargo)
@@ -43,7 +46,7 @@ public class UsuarioService {
                 usuario.getNome(),
                 usuario.getCpf(),
                 usuario.getDataNascimento(),
-                usuario.getLogin(),
+                usuario.getUsername(),
                 usuario.getTelefonePrincipal(),
                 usuario.getTelefoneSecundario(),
                 usuario.getCargo().getNome()
@@ -57,7 +60,7 @@ public class UsuarioService {
                         usuario.getNome(),
                         usuario.getCpf(),
                         usuario.getDataNascimento(),
-                        usuario.getLogin(),
+                        usuario.getUsername(),
                         usuario.getTelefonePrincipal(),
                         usuario.getTelefoneSecundario(),
                         usuario.getCargo().getNome()
@@ -72,7 +75,7 @@ public class UsuarioService {
                         usuario.getNome(),
                         usuario.getCpf(),
                         usuario.getDataNascimento(),
-                        usuario.getLogin(),
+                        usuario.getUsername(),
                         usuario.getTelefonePrincipal(),
                         usuario.getTelefoneSecundario(),
                         usuario.getCargo().getNome()
@@ -87,7 +90,7 @@ public class UsuarioService {
             usuario.setNome(dto.getNome());
             usuario.setCpf(dto.getCpf());
             usuario.setDataNascimento(dto.getDataNascimento());
-            usuario.setLogin(dto.getLogin());
+            usuario.setUsername(dto.getUsername());
             usuario.setSenha(dto.getSenha());
             usuario.setTelefonePrincipal(dto.getTelefonePrincipal());
             usuario.setTelefoneSecundario(dto.getTelefoneSecundario());
@@ -104,7 +107,7 @@ public class UsuarioService {
                     usuario.getNome(),
                     usuario.getCpf(),
                     usuario.getDataNascimento(),
-                    usuario.getLogin(),
+                    usuario.getUsername(),
                     usuario.getTelefonePrincipal(),
                     usuario.getTelefoneSecundario(),
                     usuario.getCargo().getNome()
