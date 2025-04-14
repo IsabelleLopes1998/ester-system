@@ -15,7 +15,7 @@ public class UsuarioResponseDTO {
     private String nome;
     private String cpf;
     private LocalDate dataNascimento;
-    private String login;
+    private String username;
     private String telefonePrincipal;
     private String telefoneSecundario;
     private String cargoNome;
