@@ -2,9 +2,11 @@ package com.br.demo.service;
 
 import com.br.demo.dto.request.VendaRequestDTO;
 import com.br.demo.dto.response.VendaResponseDTO;
+import com.br.demo.model.Cliente;
 import com.br.demo.model.Pagamento;
 import com.br.demo.model.Usuario;
 import com.br.demo.model.Venda;
+import com.br.demo.repository.ClienteRepository;
 import com.br.demo.repository.PagamentoRepository;
 import com.br.demo.repository.UsuarioRepository;
 import com.br.demo.repository.VendaRepository;
@@ -21,32 +23,34 @@ public class VendaService {
 	private final VendaRepository vendaRepository;
 	private final UsuarioRepository usuarioRepository;
 	private final PagamentoRepository pagamentoRepository;
+	private final ClienteRepository clienteRepository;
 	
 	public VendaService(
 			VendaRepository vendaRepository,
 			UsuarioRepository usuarioRepository,
-			PagamentoRepository pagamentoRepository
-	) {
+			PagamentoRepository pagamentoRepository ,
+			ClienteRepository clienteRepository) {
 		this.vendaRepository = vendaRepository;
 		this.usuarioRepository = usuarioRepository;
 		this.pagamentoRepository = pagamentoRepository;
+		this.clienteRepository = clienteRepository;
 	}
 	
-	public List<VendaResponseDTO> listarVendas() {
+	public List<VendaResponseDTO> getAllVendas() {
 		return vendaRepository.findAll().stream()
 					   .map(this::toResponseDTO)
 					   .collect(Collectors.toList());
 	}
 	
-	public VendaResponseDTO buscarPorId(UUID id) {
+	public VendaResponseDTO getById(UUID id) {
 		return vendaRepository.findById(id)
 					   .map(this::toResponseDTO)
 					   .orElse(null);
 	}
 	
-	public VendaResponseDTO criarVenda(VendaRequestDTO dto) {
+	public VendaResponseDTO createVenda(VendaRequestDTO dto) {
 		Usuario usuario = usuarioRepository.findById(dto.getIdUsuario()).orElse(null);
-		Usuario cliente = usuarioRepository.findById(dto.getIdCliente()).orElse(null);
+		Cliente cliente = clienteRepository.findById(dto.getIdCliente()).orElse(null);
 		Pagamento pagamento = pagamentoRepository.findById(dto.getIdPagamento()).orElse(null);
 		
 		if (usuario == null || cliente == null || pagamento == null) {
@@ -65,14 +69,14 @@ public class VendaService {
 		return toResponseDTO(venda);
 	}
 	
-	public VendaResponseDTO atualizarVenda(UUID id, VendaRequestDTO dto) {
+	public VendaResponseDTO updateVenda(UUID id, VendaRequestDTO dto) {
 		Optional<Venda> optionalVenda = vendaRepository.findById(id);
 		
 		if (optionalVenda.isPresent()) {
 			Venda venda = optionalVenda.get();
 			
 			Usuario usuario = usuarioRepository.findById(dto.getIdUsuario()).orElse(null);
-			Usuario cliente = usuarioRepository.findById(dto.getIdCliente()).orElse(null);
+			Cliente cliente = clienteRepository.findById(dto.getIdCliente()).orElse(null);
 			Pagamento pagamento = pagamentoRepository.findById(dto.getIdPagamento()).orElse(null);
 			
 			if (usuario != null) venda.setUsuario(usuario);
@@ -89,7 +93,7 @@ public class VendaService {
 		return null;
 	}
 	
-	public void excluirVenda(UUID id) {
+	public void deleteVenda(UUID id) {
 		vendaRepository.deleteById(id);
 	}
 	

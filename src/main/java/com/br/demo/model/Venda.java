@@ -15,7 +15,7 @@ import java.util.UUID;
 public class Venda {
 	
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@GeneratedValue(strategy = GenerationType.UUID)
 	private UUID id;
 	
 	@Column(nullable = false)
@@ -27,7 +27,7 @@ public class Venda {
 	
 	@ManyToOne
 	@JoinColumn(name = "id_cliente", nullable = false)
-	private Usuario cliente;
+	private Cliente cliente;
 	
 	@ManyToOne
 	@JoinColumn(name = "id_pagamento", nullable = false)
