@@ -35,7 +35,7 @@ public class ClienteService {
                 .collect(Collectors.toList());
     }
 
-    public ClienteResponseDTO buscarPorId(UUID id) {
+    public ClienteResponseDTO buscarPorId(Long id) {
         return clienteRepository.findById(id)
                 .map(cliente -> new ClienteResponseDTO(
                         cliente.getId(),
@@ -76,7 +76,7 @@ public class ClienteService {
                 cliente.getCep());
     }
 
-    public ClienteResponseDTO atualizarCliente(UUID id, ClienteRequestDTO dto) {
+    public ClienteResponseDTO atualizarCliente(Long id, ClienteRequestDTO dto) {
         Optional<Cliente> optional = clienteRepository.findById(id);
         if (optional.isPresent()) {
             Cliente cliente = optional.get();
@@ -88,7 +88,7 @@ public class ClienteService {
             cliente.setNumero(dto.getNumero());
             cliente.setComplemento(dto.getComplemento());
             cliente.setCep(dto.getCep());
-
+            clienteRepository.save(cliente);
             return new ClienteResponseDTO(
                     cliente.getId(),
                     cliente.getNome(),
@@ -103,7 +103,7 @@ public class ClienteService {
         return null;
     }
 
-    public void excluirCliente(UUID id) {
+    public void excluirCliente(Long id) {
         clienteRepository.deleteById(id);
     }
 }

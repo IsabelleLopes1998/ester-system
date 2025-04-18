@@ -13,6 +13,6 @@ import java.util.UUID;
 public class VendaRequestDTO {
 	private LocalDate data;
 	private UUID idUsuario;
-	private UUID idCliente;
+	private Long idCliente;
 	private UUID idPagamento;
 }

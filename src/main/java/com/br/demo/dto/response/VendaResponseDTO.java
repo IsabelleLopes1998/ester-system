@@ -16,6 +16,6 @@ public class VendaResponseDTO {
 	private UUID id;
 	private UUID idPagamento;
 	private UUID idUsuario;
-	private UUID idCliente;
+	private Long idCliente;
 	private LocalDate dataVenda;
 }

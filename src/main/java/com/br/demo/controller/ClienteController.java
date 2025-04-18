@@ -25,23 +25,23 @@ public class ClienteController {
             return ResponseEntity.ok(clienteService.listarClientes());
         }
 
-        @GetMapping("/{id}")
-        public ResponseEntity<ClienteResponseDTO> buscarPorId(@PathVariable UUID id) {
+        @GetMapping("/buscarPorId/{id}")
+        public ResponseEntity<ClienteResponseDTO> buscarPorId(@PathVariable Long id) {
             return ResponseEntity.ok(clienteService.buscarPorId(id));
         }
 
-        @PostMapping
+        @PostMapping("/salvarCliente")
         public ResponseEntity<ClienteResponseDTO> criarCliente(@RequestBody ClienteRequestDTO clienteRequestDTO) {
             return ResponseEntity.ok(clienteService.criarCliente(clienteRequestDTO));
         }
 
-        @PutMapping("/{id}")
-        public ResponseEntity<ClienteResponseDTO> atualizarCliente(@PathVariable UUID id, @RequestBody ClienteRequestDTO clienteRequestDTO) {
+        @PutMapping("/atualizarCliente/{id}")
+        public ResponseEntity<ClienteResponseDTO> atualizarCliente(@PathVariable Long id, @RequestBody ClienteRequestDTO clienteRequestDTO) {
             return ResponseEntity.ok(clienteService.atualizarCliente(id, clienteRequestDTO));
         }
 
-        @DeleteMapping("/{id}")
-        public ResponseEntity<Void> excluirCliente(@PathVariable UUID id) {
+        @DeleteMapping("/excluirCliente/{id}")
+        public ResponseEntity<Void> excluirCliente(@PathVariable Long id) {
             clienteService.excluirCliente(id);
             return ResponseEntity.noContent().build();
         }
