@@ -19,6 +19,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @Builder
+@Table(name = "cliente", schema = "public")
 public class Cliente {
 
     @Id

@@ -11,6 +11,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/clientes")
+@CrossOrigin(origins = "http://localhost:4200", allowCredentials = "true")
 public class ClienteController {
 
         private final ClienteService clienteService;
@@ -19,7 +20,7 @@ public class ClienteController {
             this.clienteService = clienteService;
         }
 
-        @GetMapping
+        @GetMapping("/listaDeClientes")
         public ResponseEntity<List<ClienteResponseDTO>> listarClientes() {
             return ResponseEntity.ok(clienteService.listarClientes());
         }

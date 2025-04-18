@@ -8,8 +8,10 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -29,19 +31,32 @@ public class SecurityConfig {
         this.authService = authService;
         this.jwtTokenProvider = jwtTokenProvider;
     }
-
     @Bean
-    public SecurityFilterChain securityFilterChain(org.springframework.security.config.annotation.web.builders.HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
+                .cors(Customizer.withDefaults())
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/login","/cargos","/usuarios", "/swagger-ui.html", "/swagger-ui/**", "/v2/api-docs","/v3/api-docs/**", "/swagger-resources/**", "/webjars/**").permitAll()
-                        .anyRequest().authenticated()
+                        .anyRequest().permitAll() // ✅ Libera tudo sem exigir autenticação
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider, authService), UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
+
+
+//    @Bean
+//    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+//        return http
+//                .cors(Customizer.withDefaults())
+//                .csrf(csrf -> csrf.disable())
+//                .authorizeHttpRequests(auth -> auth
+//                        .requestMatchers("/auth/login", "/cargos", "/usuarios", "/clientes", "/swagger-ui.html", "/swagger-ui/**", "/v2/api-docs", "/v3/api-docs/**", "/swagger-resources/**", "/webjars/**").permitAll()
+//                        .anyRequest().authenticated()
+//                )
+//                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+//                .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider, authService), UsernamePasswordAuthenticationFilter.class)
+//                .build();
+//    }
 
     @Bean
     public AuthenticationProvider authenticationProvider() {
