@@ -11,6 +11,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/produtos")
+@CrossOrigin(origins = "http://localhost:4200", allowCredentials = "true")
 public class ProdutoController {
 
     private final ProdutoService produtoService;
@@ -19,27 +20,27 @@ public class ProdutoController {
         this.produtoService = produtoService;
     }
 
-    @GetMapping
+    @GetMapping("/listaDeProdutos")
     public ResponseEntity<List<ProdutoResponseDTO>> listarProdutos() {
         return ResponseEntity.ok(produtoService.listarProdutos());
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/buscarPorId/{id}")
     public ResponseEntity<ProdutoResponseDTO> buscarPorId(@PathVariable UUID id) {
         return ResponseEntity.ok(produtoService.buscarPorId(id));
     }
 
-    @PostMapping
+    @PostMapping("/salvarProduto")
     public ResponseEntity<ProdutoResponseDTO> criarProduto(@RequestBody ProdutoRequestDTO produtoRequestDTO) {
         return ResponseEntity.ok(produtoService.criarProduto(produtoRequestDTO));
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/atualizarProduto/{id}")
     public ResponseEntity<ProdutoResponseDTO> atualizarProduto(@PathVariable UUID id, @RequestBody ProdutoRequestDTO produtoRequestDTO) {
         return ResponseEntity.ok(produtoService.atualizarProduto(id, produtoRequestDTO));
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/excluirProduto/{id}")
     public ResponseEntity<Void> excluirProduto(@PathVariable UUID id) {
         produtoService.excluirProduto(id);
         return ResponseEntity.noContent().build();

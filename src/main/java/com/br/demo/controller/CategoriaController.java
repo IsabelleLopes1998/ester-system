@@ -11,6 +11,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/categorias")
+@CrossOrigin(origins = "http://localhost:4200", allowCredentials = "true")
 public class CategoriaController {
 
     private final CategoriaService categoriaService;
@@ -19,27 +20,27 @@ public class CategoriaController {
         this.categoriaService = categoriaService;
     }
 
-    @GetMapping
+    @GetMapping("/listaDeCategoria")
     public ResponseEntity<List<CategoriaResponseDTO>> listarCategorias() {
         return ResponseEntity.ok(categoriaService.listarCategorias());
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/buscarPorId/{id}")
     public ResponseEntity<CategoriaResponseDTO> buscarPorId(@PathVariable UUID id) {
         return ResponseEntity.ok(categoriaService.buscarPorId(id));
     }
 
-    @PostMapping
+    @PostMapping("/salvarCategoria")
     public ResponseEntity<CategoriaResponseDTO> criarCategoria(@RequestBody CategoriaRequestDTO categoriaRequestDTO) {
         return ResponseEntity.ok(categoriaService.criarCategoria(categoriaRequestDTO));
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/atualizarCategoria/{id}")
     public ResponseEntity<CategoriaResponseDTO> atualizarCategoria(@PathVariable UUID id, @RequestBody CategoriaRequestDTO categoriaRequestDTO) {
         return ResponseEntity.ok(categoriaService.atualizarCategoria(id, categoriaRequestDTO));
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/excluirCategoria/{id}")
     public ResponseEntity<Void> excluirCategoria(@PathVariable UUID id) {
         categoriaService.excluirCategoria(id);
         return ResponseEntity.noContent().build();

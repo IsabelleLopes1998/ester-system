@@ -16,7 +16,7 @@ public class ProdutoRequestDTO {
     private String nome;
     private BigDecimal valor;
     private Integer quantidadeEstoque;
-    private UUID idUsuario;
+    //private UUID idUsuario;
     private UUID idCategoria;
     private UUID idSubcategoria; // pode ser null
 }

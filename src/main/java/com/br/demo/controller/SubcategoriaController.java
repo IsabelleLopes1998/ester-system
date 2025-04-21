@@ -11,6 +11,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/subcategorias")
+@CrossOrigin(origins = "http://localhost:4200", allowCredentials = "true")
 public class SubcategoriaController {
 
     private final SubcategoriaService subcategoriaService;
@@ -19,27 +20,27 @@ public class SubcategoriaController {
         this.subcategoriaService = subcategoriaService;
     }
 
-    @PostMapping
+    @PostMapping("/salvarSubcategoria")
     public ResponseEntity<SubcategoriaResponseDTO> criarSubcategoria(@RequestBody SubcategoriaRequestDTO dto) {
         return ResponseEntity.ok(subcategoriaService.criarSubcategoria(dto));
     }
 
-    @GetMapping
+    @GetMapping("/listaDeSubcategorias")
     public ResponseEntity<List<SubcategoriaResponseDTO>> listarSubcategorias() {
         return ResponseEntity.ok(subcategoriaService.listarSubcategorias());
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/buscarPorId/{id}")
     public ResponseEntity<SubcategoriaResponseDTO> buscarPorId(@PathVariable UUID id) {
         return ResponseEntity.ok(subcategoriaService.buscarPorId(id));
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/atualizarSubcategoria/{id}")
     public ResponseEntity<SubcategoriaResponseDTO> atualizarSubcategoria(@PathVariable UUID id, @RequestBody SubcategoriaRequestDTO dto) {
         return ResponseEntity.ok(subcategoriaService.atualizarSubcategoria(id, dto));
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/excluirSubcategoria/{id}")
     public ResponseEntity<Void> excluirSubcategoria(@PathVariable UUID id) {
         subcategoriaService.excluirSubcategoria(id);
         return ResponseEntity.noContent().build();

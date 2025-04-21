@@ -28,16 +28,16 @@ public class Produto {
     @Column(nullable = false)
     private Integer quantidadeEstoque;
 
-    @ManyToOne
-    @JoinColumn(name = "id_usuario", nullable = false)
-    private Usuario usuario;
+//    @ManyToOne
+//    @JoinColumn(name = "id_usuario", nullable = false)
+//    private Usuario usuario;
 
     @ManyToOne
     @JoinColumn(name = "id_categoria", nullable = false)
     private Categoria categoria;
 
     @ManyToOne
-    @JoinColumn(name = "id_subcategoria")
+    @JoinColumn(name = "id_subcategoria", nullable = true)
     private Subcategoria subcategoria;
 
     @Column(nullable = false, updatable = false)

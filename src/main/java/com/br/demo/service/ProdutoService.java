@@ -65,22 +65,21 @@ public class ProdutoService {
 
     public ProdutoResponseDTO criarProduto(ProdutoRequestDTO dto) {
         Categoria categoria = categoriaRepository.findById(dto.getIdCategoria()).orElse(null);
-        Usuario usuario = usuarioRepository.findById(dto.getIdUsuario()).orElse(null);
+        //Usuario usuario = usuarioRepository.findById(dto.getIdUsuario()).orElse(null);
         Subcategoria subcategoria = null;
 
         if (dto.getIdSubcategoria() != null) {
             subcategoria = subcategoriaRepository.findById(dto.getIdSubcategoria()).orElse(null);
         }
 
-        if (categoria == null || usuario == null) {
+        if (categoria == null /*|| usuario == null*/) {
             return null;
         }
-
+        // apaguei o .usuario(usuario)
         Produto produto = Produto.builder()
                 .nome(dto.getNome())
                 .valor(dto.getValor())
                 .quantidadeEstoque(dto.getQuantidadeEstoque())
-                .usuario(usuario)
                 .categoria(categoria)
                 .subcategoria(subcategoria)
                 .build();
