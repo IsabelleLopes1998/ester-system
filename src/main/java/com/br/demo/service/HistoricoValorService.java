@@ -45,7 +45,7 @@ public class HistoricoValorService {
     }
 
     public HistoricoValorResponseDTO criarHistoricoValor(HistoricoValorRequestDTO dto) {
-        Produto produto = produtoRepository.findById(dto.getIdProduto())
+        Produto produto = produtoRepository.findById(dto.getProduto().getId())
                 .orElse(null);
 
         if (produto == null) {
@@ -75,7 +75,7 @@ public class HistoricoValorService {
             historicoValor.setData(dto.getData());
             historicoValor.setValor(dto.getValor());
 
-            Produto produto = produtoRepository.findById(dto.getIdProduto()).orElse(null);
+            Produto produto = produtoRepository.findById(dto.getProduto().getId()).orElse(null);
             if (produto != null) {
                 historicoValor.setProduto(produto);
             }

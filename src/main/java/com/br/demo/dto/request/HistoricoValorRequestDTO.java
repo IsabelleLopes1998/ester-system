@@ -1,5 +1,6 @@
 package com.br.demo.dto.request;
 
+import com.br.demo.model.Produto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,5 +17,5 @@ import java.util.UUID;
 public class HistoricoValorRequestDTO {
     private LocalDate data;
     private BigDecimal valor;
-    private UUID idProduto;
+    private Produto produto;
 }

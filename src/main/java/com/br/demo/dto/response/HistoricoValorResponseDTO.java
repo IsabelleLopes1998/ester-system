@@ -15,5 +15,5 @@ public class HistoricoValorResponseDTO {
     private UUID id;
     private LocalDate data;
     private BigDecimal valor;
-    private String nomeProduto;
+    private String nome;
 }
