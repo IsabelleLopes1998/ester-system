@@ -26,7 +26,7 @@ public class ClienteService {
                         cliente.getId(),
                         cliente.getNome(),
                         cliente.getCpf(),
-                        cliente.getDateBirth(),
+                        cliente.getDataNascimento(),
                         cliente.getEmail(),
                         cliente.getRua(),
                         cliente.getNumero(),
@@ -41,7 +41,7 @@ public class ClienteService {
                         cliente.getId(),
                         cliente.getNome(),
                         cliente.getCpf(),
-                        cliente.getDateBirth(),
+                        cliente.getDataNascimento(),
                         cliente.getEmail(),
                         cliente.getRua(),
                         cliente.getNumero(),
@@ -54,7 +54,7 @@ public class ClienteService {
         Cliente cliente = Cliente.builder()
                 .nome(dto.getNome())
                 .cpf(dto.getCpf())
-                .dateBirth(dto.getDateBirth())
+                .dataNascimento(dto.getDataNascimento())
                 .email(dto.getEmail())
                 .rua(dto.getRua())
                 .numero(dto.getNumero())
@@ -68,7 +68,7 @@ public class ClienteService {
                 cliente.getId(),
                 cliente.getNome(),
                 cliente.getCpf(),
-                cliente.getDateBirth(),
+                cliente.getDataNascimento(),
                 cliente.getEmail(),
                 cliente.getRua(),
                 cliente.getNumero(),
@@ -82,7 +82,7 @@ public class ClienteService {
             Cliente cliente = optional.get();
             cliente.setNome(dto.getNome());
             cliente.setCpf(dto.getCpf());
-            cliente.setDateBirth(dto.getDateBirth());
+            cliente.setDataNascimento(dto.getDataNascimento());
             cliente.setEmail(dto.getEmail());
             cliente.setRua(dto.getRua());
             cliente.setNumero(dto.getNumero());
@@ -93,7 +93,7 @@ public class ClienteService {
                     cliente.getId(),
                     cliente.getNome(),
                     cliente.getCpf(),
-                    cliente.getDateBirth(),
+                    cliente.getDataNascimento(),
                     cliente.getEmail(),
                     cliente.getRua(),
                     cliente.getNumero(),
