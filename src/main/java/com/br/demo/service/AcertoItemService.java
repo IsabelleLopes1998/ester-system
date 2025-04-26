@@ -4,7 +4,6 @@ import com.br.demo.dto.request.AcertoItemRequestDTO;
 import com.br.demo.dto.response.AcertoItemResponseDTO;
 import com.br.demo.model.*;
 import com.br.demo.repository.AcertoItemRepository;
-import com.br.demo.repository.AcertoEstoqueRepository;
 import com.br.demo.repository.ProdutoRepository;
 import org.springframework.stereotype.Service;
 
@@ -17,12 +16,12 @@ public class AcertoItemService {
 	
 	private final AcertoItemRepository itemRepository;
 	private final ProdutoRepository produtoRepository;
-	private final AcertoEstoqueRepository acertoRepository;
 	
-	public AcertoItemService(AcertoItemRepository itemRepository, ProdutoRepository produtoRepository, AcertoEstoqueRepository acertoRepository) {
+	
+	public AcertoItemService(AcertoItemRepository itemRepository, ProdutoRepository produtoRepository) {
 		this.itemRepository = itemRepository;
 		this.produtoRepository = produtoRepository;
-		this.acertoRepository = acertoRepository;
+		
 	}
 	
 	public List<AcertoItemResponseDTO> listar() {
@@ -35,13 +34,8 @@ public class AcertoItemService {
 		Produto produto = produtoRepository.findById(dto.getIdProduto())
 								  .orElseThrow(() -> new IllegalArgumentException("Produto não encontrado"));
 		
-		AcertoEstoque acerto = acertoRepository.findById(dto.getIdAcerto())
-									   .orElseThrow(() -> new IllegalArgumentException("Acerto não encontrado"));
-		
 		AcertoItem item = AcertoItem.builder()
-								  .id(new AcertoItemId(dto.getIdProduto(), dto.getIdAcerto()))
 								  .produto(produto)
-								  .acerto(acerto)
 								  .data(dto.getData())
 								  .quantidade(dto.getQuantidade())
 								  .valor(dto.getValor())
@@ -52,19 +46,26 @@ public class AcertoItemService {
 		return toDTO(item);
 	}
 	
-	public void excluir(UUID idProduto, UUID idAcerto) {
-		AcertoItemId id = new AcertoItemId(idProduto, idAcerto);
-		itemRepository.deleteById(id);
+	public void excluir(UUID idAcerto) {
+		itemRepository.deleteById(idAcerto);
 	}
 	
 	private AcertoItemResponseDTO toDTO(AcertoItem item) {
 		return new AcertoItemResponseDTO(
 				item.getProduto().getId(),
-				item.getAcerto().getId(),
 				item.getData(),
 				item.getQuantidade(),
 				item.getValor(),
-				item.getObservacao()
+				item.getObservacao(),
+				item.getTipoAcerto(),
+				item.getUsuario().getId()
 		);
+	}
+	
+	public AcertoItemResponseDTO buscarPorId(UUID id) {
+		AcertoItem item = itemRepository.findById(id)
+								  .orElseThrow(() -> new IllegalArgumentException("AcertoItem não encontrado com ID: " + id));
+		
+		return toDTO(item);
 	}
 }

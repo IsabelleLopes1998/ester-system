@@ -1,5 +1,6 @@
 package com.br.demo.model;
 
+import com.br.demo.enums.TipoAcerto;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -8,6 +9,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Entity
 @NoArgsConstructor
@@ -17,18 +19,14 @@ import java.time.LocalDateTime;
 @Builder
 public class AcertoItem {
 	
-	@EmbeddedId
-	private AcertoItemId id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.UUID)
+	private UUID id;
 	
 	@ManyToOne
 	@MapsId("idProduto")
 	@JoinColumn(name = "id_produto", nullable = false)
 	private Produto produto;
-	
-	@ManyToOne
-	@MapsId("idAcerto")
-	@JoinColumn(name = "id_acerto", nullable = false)
-	private AcertoEstoque acerto;
 	
 	@Column(nullable = false)
 	private LocalDate data;
@@ -41,7 +39,15 @@ public class AcertoItem {
 	
 	@Column(length = 200)
 	private String observacao;
-
+	
+	@Enumerated(EnumType.STRING)
+	@Column(nullable = false)
+	private TipoAcerto tipoAcerto;
+	
+	@ManyToOne(optional = false)
+	@JoinColumn(name = "id_usuario", nullable = false)
+	private Usuario usuario;
+	
 	@Column(name = "created_at", nullable = false, updatable = false)
 	@CreationTimestamp
 	private LocalDateTime createdAt;
@@ -49,4 +55,5 @@ public class AcertoItem {
 	@Column(nullable = false)
 	@UpdateTimestamp
 	private LocalDateTime updatedAt;
+	
 }
