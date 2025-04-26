@@ -1,5 +1,6 @@
 package com.br.demo.dto.response;
 
+import com.br.demo.enums.TipoAcerto;
 import lombok.*;
 
 import java.math.BigDecimal;
@@ -12,9 +13,10 @@ import java.util.UUID;
 @AllArgsConstructor
 public class AcertoItemResponseDTO {
 	private UUID idProduto;
-	private UUID idAcerto;
 	private LocalDate data;
 	private Integer quantidade;
 	private BigDecimal valor;
 	private String observacao;
+	private TipoAcerto tipoAcerto;
+	private UUID idUsuario;
 }

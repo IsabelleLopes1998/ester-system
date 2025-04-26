@@ -12,9 +12,10 @@ import java.util.UUID;
 @AllArgsConstructor
 public class AcertoItemRequestDTO {
 	private UUID idProduto;
-	private UUID idAcerto;
 	private LocalDate data;
 	private Integer quantidade;
 	private BigDecimal valor;
 	private String observacao;
+	private String tipoAcerto;
+	private UUID idUsuario;
 }

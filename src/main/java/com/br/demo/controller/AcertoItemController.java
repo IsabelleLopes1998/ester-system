@@ -30,8 +30,13 @@ public class AcertoItemController {
 	}
 	
 	@DeleteMapping("/{idProduto}/{idAcerto}")
-	public ResponseEntity<Void> excluir(@PathVariable UUID idProduto, @PathVariable UUID idAcerto) {
-		service.excluir(idProduto, idAcerto);
+	public ResponseEntity<Void> excluir(@PathVariable UUID idAcerto) {
+		service.excluir(idAcerto);
 		return ResponseEntity.noContent().build();
+	}
+	
+	@GetMapping("/{id}")
+	public ResponseEntity<AcertoItemResponseDTO> buscarPorId(@PathVariable UUID id) {
+		return ResponseEntity.ok(service.buscarPorId(id));
 	}
 }
