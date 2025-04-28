@@ -5,6 +5,7 @@ import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
@@ -26,7 +27,10 @@ public class VendaItem {
 	
 	@Column(nullable = false)
 	private Integer quantidadeVenda;
-	
+
+	@Column(nullable = false, precision = 10, scale = 2)
+	private BigDecimal valorUnitario;
+
 	@Column(name = "created_at", nullable = false, updatable = false)
 	@CreationTimestamp
 	private LocalDateTime createdAt;
