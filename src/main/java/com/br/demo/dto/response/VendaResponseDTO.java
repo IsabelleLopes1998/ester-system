@@ -1,11 +1,13 @@
 package com.br.demo.dto.response;
 
+import com.br.demo.dto.VendaItemDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
 
 @Getter
@@ -15,7 +17,8 @@ import java.util.UUID;
 public class VendaResponseDTO {
 	private UUID id;
 	private UUID idPagamento;
-	private UUID idUsuario;
+	private String usernameUsuario;
 	private Long idCliente;
 	private LocalDate dataVenda;
+	private List<VendaItemDTO> vendaItemList;
 }
