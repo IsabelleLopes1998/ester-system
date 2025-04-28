@@ -2,9 +2,11 @@ package com.br.demo.service;
 
 import com.br.demo.dto.request.AcertoItemRequestDTO;
 import com.br.demo.dto.response.AcertoItemResponseDTO;
+import com.br.demo.enums.TipoAcerto;
 import com.br.demo.model.*;
 import com.br.demo.repository.AcertoItemRepository;
 import com.br.demo.repository.ProdutoRepository;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -30,7 +32,7 @@ public class AcertoItemService {
 					   .collect(Collectors.toList());
 	}
 	
-	public AcertoItemResponseDTO criar(AcertoItemRequestDTO dto) {
+	public AcertoItemResponseDTO criar(AcertoItemRequestDTO dto, Usuario usuario) {
 		Produto produto = produtoRepository.findById(dto.getIdProduto())
 								  .orElseThrow(() -> new IllegalArgumentException("Produto não encontrado"));
 		
@@ -38,8 +40,9 @@ public class AcertoItemService {
 								  .produto(produto)
 								  .data(dto.getData())
 								  .quantidade(dto.getQuantidade())
-								  .valor(dto.getValor())
+				                  .tipoAcerto(TipoAcerto.valueOf(dto.getTipoAcerto()))
 								  .observacao(dto.getObservacao())
+				                  .usuario(usuario)
 								  .build();
 		
 		item = itemRepository.save(item);
@@ -55,7 +58,6 @@ public class AcertoItemService {
 				item.getProduto().getId(),
 				item.getData(),
 				item.getQuantidade(),
-				item.getValor(),
 				item.getObservacao(),
 				item.getTipoAcerto(),
 				item.getUsuario().getId()

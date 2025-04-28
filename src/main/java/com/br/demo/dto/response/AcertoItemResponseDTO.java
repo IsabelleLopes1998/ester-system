@@ -15,7 +15,6 @@ public class AcertoItemResponseDTO {
 	private UUID idProduto;
 	private LocalDate data;
 	private Integer quantidade;
-	private BigDecimal valor;
 	private String observacao;
 	private TipoAcerto tipoAcerto;
 	private UUID idUsuario;

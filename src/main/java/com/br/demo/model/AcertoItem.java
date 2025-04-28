@@ -24,7 +24,6 @@ public class AcertoItem {
 	private UUID id;
 	
 	@ManyToOne
-	@MapsId("idProduto")
 	@JoinColumn(name = "id_produto", nullable = false)
 	private Produto produto;
 	

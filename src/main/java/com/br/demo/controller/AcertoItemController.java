@@ -2,8 +2,10 @@ package com.br.demo.controller;
 
 import com.br.demo.dto.request.AcertoItemRequestDTO;
 import com.br.demo.dto.response.AcertoItemResponseDTO;
+import com.br.demo.model.Usuario;
 import com.br.demo.service.AcertoItemService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -25,8 +27,9 @@ public class AcertoItemController {
 	}
 	
 	@PostMapping
-	public ResponseEntity<AcertoItemResponseDTO> criar(@RequestBody AcertoItemRequestDTO dto) {
-		return ResponseEntity.ok(service.criar(dto));
+	public ResponseEntity<AcertoItemResponseDTO> criar(@RequestBody AcertoItemRequestDTO dto, @AuthenticationPrincipal Usuario usuario) {
+		System.out.println(usuario.getUsername());
+		return ResponseEntity.ok(service.criar(dto,usuario));
 	}
 	
 	@DeleteMapping("/{idProduto}/{idAcerto}")
