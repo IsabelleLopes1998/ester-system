@@ -6,6 +6,7 @@ import com.br.demo.dto.response.CompraItemResponseDTO;
 import com.br.demo.dto.response.CompraResponseDTO;
 import com.br.demo.model.*;
 import com.br.demo.repository.*;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,25 +19,22 @@ public class CompraService {
     private final CompraRepository compraRepository;
     private final CompraItemRepository compraItemRepository;
     private final ProdutoRepository produtoRepository;
-    private final UsuarioRepository usuarioRepository;
     private final PagamentoRepository pagamentoRepository;
     
     public CompraService(
             CompraRepository compraRepository,
             CompraItemRepository compraItemRepository,
             ProdutoRepository produtoRepository,
-            UsuarioRepository usuarioRepository,
             PagamentoRepository pagamentoRepository
     ) {
         this.compraRepository = compraRepository;
         this.compraItemRepository = compraItemRepository;
         this.produtoRepository = produtoRepository;
-        this.usuarioRepository = usuarioRepository;
         this.pagamentoRepository = pagamentoRepository;
     }
 
-    public CompraResponseDTO criarCompra(CompraRequestDTO dto) {
-        Usuario usuario = usuarioRepository.findById(dto.getUsuarioId()).orElseThrow();
+    @Transactional
+    public CompraResponseDTO criarCompra(CompraRequestDTO dto, Usuario usuario) {
         Pagamento pagamento = pagamentoRepository.findById(dto.getPagamentoId()).orElseThrow();
 
         Compra compra = Compra.builder()
@@ -92,15 +90,25 @@ public class CompraService {
 
     public List<CompraResponseDTO> listarCompras() {
         return compraRepository.findAll().stream()
-                .map(compra -> CompraResponseDTO.builder()
-                        .id(compra.getId())
-                        .data(compra.getData())
-                        .fornecedor(compra.getFornecedor())
-                        .nomeUsuario(compra.getUsuario().getNome())
-                        .formaPagamento(compra.getPagamento().getFormaPagamento().toString())
-                        .quantidadeParcelas(compra.getQuantidadeParcelas())
-                        .itens(null) // Opcional: podemos popular se quiser
-                        .build())
+                .map(compra -> {
+                    List<CompraItemResponseDTO> itensResponse = compra.getCompraItens().stream()
+                            .map(item -> new CompraItemResponseDTO(
+                                    item.getProduto().getNome(),
+                                    item.getValorUnitario(),
+                                    item.getQuantidadeVenda()
+                            ))
+                            .collect(Collectors.toList());
+
+                    return CompraResponseDTO.builder()
+                            .id(compra.getId())
+                            .data(compra.getData())
+                            .fornecedor(compra.getFornecedor())
+                            .nomeUsuario(compra.getUsuario().getNome())
+                            .formaPagamento(compra.getPagamento().getFormaPagamento().toString())
+                            .quantidadeParcelas(compra.getQuantidadeParcelas())
+                            .itens(itensResponse)
+                            .build();
+                })
                 .collect(Collectors.toList());
     }
 }
