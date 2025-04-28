@@ -16,10 +16,6 @@ ALTER TABLE historico_valor ALTER COLUMN created_at SET DEFAULT now();
 ALTER TABLE historico_valor ALTER COLUMN updated_at SET DEFAULT now();
 ALTER TABLE venda ALTER COLUMN created_at SET DEFAULT now();
 ALTER TABLE venda ALTER COLUMN updated_at SET DEFAULT now();
-ALTER TABLE acerto_estoque ALTER COLUMN created_at SET DEFAULT now();
-ALTER TABLE acerto_estoque ALTER COLUMN updated_at SET DEFAULT now();
-ALTER TABLE acerto_item ALTER COLUMN created_at SET DEFAULT now();
-ALTER TABLE acerto_item ALTER COLUMN updated_at SET DEFAULT now();
 ALTER TABLE pagamento ALTER COLUMN created_at SET DEFAULT now();
 ALTER TABLE pagamento ALTER COLUMN updated_at SET DEFAULT now();
 ALTER TABLE compra ALTER COLUMN created_at SET DEFAULT now();
@@ -98,12 +94,4 @@ INSERT INTO compra_item (id_produto, valor_unitario, quantidade_venda, id_compra
 VALUES
   ((SELECT id FROM produto WHERE nome = 'Anel de Ouro'), 300.00, 5, (SELECT id FROM compra WHERE data = '2025-03-15'));
 
--- Acertos
-INSERT INTO acerto_estoque (id, id_usuario, data, motivo,tipo_acerto)
-VALUES
-  (uuid_generate_v4(), (SELECT id FROM usuario WHERE nome = 'wicar pessoa'), '2025-04-10', 'Acerto de estoque abril','ENTRADA');
 
--- Acerto Itens
-INSERT INTO acerto_item (id_produto, id_acerto, data, quantidade, valor, observacao)
-VALUES
-  ((SELECT id FROM produto WHERE nome = 'Anel de Ouro'), (SELECT id FROM acerto_estoque WHERE data = '2025-04-10'), '2025-04-10', 3, 350.00, 'Reposição estoque');
