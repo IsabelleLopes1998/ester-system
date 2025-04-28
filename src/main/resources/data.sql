@@ -71,16 +71,17 @@ VALUES
     (uuid_generate_v4(), 'Colar de Ouro', 340.00, 0,
         (SELECT id FROM categoria WHERE nome = 'Categoria Joias'),
         (SELECT id FROM subcategoria WHERE nome = 'Anéis')),
-      (uuid_generate_v4(), 'Pulseira de Prata', 180.00, 0,
+      (uuid_generate_v4(), 'Colar de bijouteria', 180.00, 0,
         (SELECT id FROM categoria WHERE nome = 'Categoria Semi Joias'),
         (SELECT id FROM subcategoria WHERE nome = 'Pulseiras'));
 
 -- Histórico de valores dos produtos
 INSERT INTO historico_valor (id, data, valor, id_produto)
 VALUES
-  (uuid_generate_v4(), '2025-01-01', 300.00, (SELECT id FROM produto WHERE nome = 'Anel de Ouro')),
-  (uuid_generate_v4(), '2025-02-01', 350.00, (SELECT id FROM produto WHERE nome = 'Anel de Ouro'));
-
+  (uuid_generate_v4(), '2025-01-01', 350.00, (SELECT id FROM produto WHERE nome = 'Anel de Ouro')),
+  (uuid_generate_v4(), '2025-02-01', 180.00, (SELECT id FROM produto WHERE nome = 'Pulseira de Prata')),
+  (uuid_generate_v4(), '2025-01-01', 340.00, (SELECT id FROM produto WHERE nome = 'Colar de Ouro')),
+  (uuid_generate_v4(), '2025-02-01', 180.00, (SELECT id FROM produto WHERE nome = 'Colar de bijouteria'));
 
 
 
