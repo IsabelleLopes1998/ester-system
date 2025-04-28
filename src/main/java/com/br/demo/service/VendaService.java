@@ -1,15 +1,11 @@
 package com.br.demo.service;
 
+import com.br.demo.dto.VendaItemDTO;
 import com.br.demo.dto.request.VendaRequestDTO;
 import com.br.demo.dto.response.VendaResponseDTO;
-import com.br.demo.model.Cliente;
-import com.br.demo.model.Pagamento;
-import com.br.demo.model.Usuario;
-import com.br.demo.model.Venda;
-import com.br.demo.repository.ClienteRepository;
-import com.br.demo.repository.PagamentoRepository;
-import com.br.demo.repository.UsuarioRepository;
-import com.br.demo.repository.VendaRepository;
+import com.br.demo.model.*;
+import com.br.demo.repository.*;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -21,19 +17,19 @@ import java.util.stream.Collectors;
 public class VendaService {
 	
 	private final VendaRepository vendaRepository;
-	private final UsuarioRepository usuarioRepository;
 	private final PagamentoRepository pagamentoRepository;
 	private final ClienteRepository clienteRepository;
-	
+	private final ProdutoRepository produtoRepository;
 	public VendaService(
 			VendaRepository vendaRepository,
-			UsuarioRepository usuarioRepository,
 			PagamentoRepository pagamentoRepository ,
-			ClienteRepository clienteRepository) {
+			ClienteRepository clienteRepository,
+			ProdutoRepository produtoRepository
+	) {
 		this.vendaRepository = vendaRepository;
-		this.usuarioRepository = usuarioRepository;
 		this.pagamentoRepository = pagamentoRepository;
 		this.clienteRepository = clienteRepository;
+		this.produtoRepository = produtoRepository;
 	}
 	
 	public List<VendaResponseDTO> getAllVendas() {
@@ -47,14 +43,26 @@ public class VendaService {
 					   .map(this::toResponseDTO)
 					   .orElse(null);
 	}
-	
-	public VendaResponseDTO createVenda(VendaRequestDTO dto) {
-		Usuario usuario = usuarioRepository.findById(dto.getIdUsuario()).orElse(null);
+
+	@Transactional
+	public VendaResponseDTO createVenda(VendaRequestDTO dto, Usuario usuario) {
 		Cliente cliente = clienteRepository.findById(dto.getIdCliente()).orElse(null);
 		Pagamento pagamento = pagamentoRepository.findById(dto.getIdPagamento()).orElse(null);
 		
 		if (usuario == null || cliente == null || pagamento == null) {
 			return null;
+		}
+
+		for(VendaItemDTO vendaItem : dto.getVendaItemList()) {
+			Produto produto = produtoRepository.findById(vendaItem.getProdutoId())
+					.orElseThrow(() -> new IllegalArgumentException("Produto não encontrado: " + vendaItem.getProdutoId()));
+
+			if (produto.getQuantidadeEstoque() < vendaItem.getQuantidadeVenda()) {
+				throw new IllegalArgumentException("Estoque insuficiente para o produto: " + produto.getNome());
+			}
+
+			produto.setQuantidadeEstoque(produto.getQuantidadeEstoque() - vendaItem.getQuantidadeVenda());
+			produtoRepository.save(produto);
 		}
 		
 		Venda venda = Venda.builder()
@@ -75,11 +83,9 @@ public class VendaService {
 		if (optionalVenda.isPresent()) {
 			Venda venda = optionalVenda.get();
 			
-			Usuario usuario = usuarioRepository.findById(dto.getIdUsuario()).orElse(null);
 			Cliente cliente = clienteRepository.findById(dto.getIdCliente()).orElse(null);
 			Pagamento pagamento = pagamentoRepository.findById(dto.getIdPagamento()).orElse(null);
 			
-			if (usuario != null) venda.setUsuario(usuario);
 			if (cliente != null) venda.setCliente(cliente);
 			if (pagamento != null) venda.setPagamento(pagamento);
 			
@@ -100,7 +106,7 @@ public class VendaService {
 	private VendaResponseDTO toResponseDTO(Venda venda) {
 		return VendaResponseDTO.builder()
 					   .id(venda.getId())
-					   .idUsuario(venda.getUsuario().getId())
+					   .usernameUsuario(venda.getUsuario().getUsername())
 					   .idCliente(venda.getCliente().getId())
 					   .idPagamento(venda.getPagamento().getId())
 					   .dataVenda(venda.getData())
