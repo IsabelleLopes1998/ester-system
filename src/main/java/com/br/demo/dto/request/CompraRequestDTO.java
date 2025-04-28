@@ -15,8 +15,7 @@ import java.util.UUID;
 public class CompraRequestDTO {
     private LocalDate data;
     private String fornecedor;
-    private UUID usuarioId;
     private UUID pagamentoId;
     private Integer quantidadeParcelas;
-    private List<CompraItemRequestDTO> itens; // Lista de produtos comprados
+    private List<CompraItemRequestDTO> itens;
 }
