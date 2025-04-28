@@ -58,15 +58,22 @@ VALUES
   (uuid_generate_v4(), 'Pulseiras', 'semi joias', (SELECT id FROM categoria WHERE nome = 'Categoria Semi Joias'));
 
 
+
 -- Produtos
 INSERT INTO produto (id, nome, valor, quantidade_estoque, id_categoria, id_subcategoria)
 VALUES
-  (uuid_generate_v4(), 'Anel de Ouro', 350.00, 10,
+  (uuid_generate_v4(), 'Anel de Ouro', 350.00, 0,
     (SELECT id FROM categoria WHERE nome = 'Categoria Joias'),
     (SELECT id FROM subcategoria WHERE nome = 'Anéis')),
-  (uuid_generate_v4(), 'Pulseira de Prata', 180.00, 20,
+  (uuid_generate_v4(), 'Pulseira de Prata', 180.00, 0,
     (SELECT id FROM categoria WHERE nome = 'Categoria Semi Joias'),
-    (SELECT id FROM subcategoria WHERE nome = 'Pulseiras'));
+    (SELECT id FROM subcategoria WHERE nome = 'Pulseiras')),
+    (uuid_generate_v4(), 'Colar de Ouro', 340.00, 0,
+        (SELECT id FROM categoria WHERE nome = 'Categoria Joias'),
+        (SELECT id FROM subcategoria WHERE nome = 'Anéis')),
+      (uuid_generate_v4(), 'Pulseira de Prata', 180.00, 0,
+        (SELECT id FROM categoria WHERE nome = 'Categoria Semi Joias'),
+        (SELECT id FROM subcategoria WHERE nome = 'Pulseiras'));
 
 -- Histórico de valores dos produtos
 INSERT INTO historico_valor (id, data, valor, id_produto)
@@ -74,24 +81,6 @@ VALUES
   (uuid_generate_v4(), '2025-01-01', 300.00, (SELECT id FROM produto WHERE nome = 'Anel de Ouro')),
   (uuid_generate_v4(), '2025-02-01', 350.00, (SELECT id FROM produto WHERE nome = 'Anel de Ouro'));
 
--- Vendas
-INSERT INTO venda (id, data, id_usuario, id_cliente, id_pagamento)
-VALUES
-  (uuid_generate_v4(), '2025-04-01',
-    (SELECT id FROM usuario WHERE nome = 'wicar pessoa'),
-    1,
-    (SELECT id FROM pagamento WHERE forma_pagamento = 'CARTAO_CREDITO'));
 
--- Compra
-INSERT INTO compra (id, data, fornecedor, id_usuario, id_pagamento, quantidade_parcelas)
-VALUES
-  (uuid_generate_v4(), '2025-03-15', 'Fornecedor Joias LTDA',
-    (SELECT id FROM usuario WHERE nome = 'ian marcelino'),
-     (SELECT id FROM pagamento WHERE forma_pagamento = 'CARTAO_CREDITO'), 3);
-
--- Compra Itens
-INSERT INTO compra_item (id_produto, valor_unitario, quantidade_venda, id_compra)
-VALUES
-  ((SELECT id FROM produto WHERE nome = 'Anel de Ouro'), 300.00, 5, (SELECT id FROM compra WHERE data = '2025-03-15'));
 
 
