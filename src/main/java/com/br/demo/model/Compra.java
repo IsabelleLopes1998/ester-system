@@ -9,6 +9,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 
@@ -26,6 +27,9 @@ public class Compra {
 
     @Column(nullable = false)
     private LocalDate data;
+
+    @OneToMany(mappedBy = "compra", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<CompraItem> compraItens;
 
     @Column
     private String fornecedor;
