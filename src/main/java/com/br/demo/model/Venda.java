@@ -7,6 +7,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -23,7 +24,10 @@ public class Venda {
 	
 	@Column(nullable = false)
 	private LocalDate data;
-	
+
+	@OneToMany(mappedBy = "venda", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<VendaItem> vendaItens;
+
 	@ManyToOne
 	@JoinColumn(name = "id_usuario", nullable = false)
 	private Usuario usuario;
