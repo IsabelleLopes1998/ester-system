@@ -173,14 +173,24 @@ public class VendaService {
 	public void deleteVenda(UUID id) {
 		vendaRepository.deleteById(id);
 	}
-	
+
 	private VendaResponseDTO toResponseDTO(Venda venda) {
 		return VendaResponseDTO.builder()
-					   .id(venda.getId())
-					   .usernameUsuario(venda.getUsuario().getUsername())
-					   .idCliente(venda.getCliente().getId())
-					   .idPagamento(venda.getPagamento().getId())
-					   .dataVenda(venda.getData())
-					   .build();
+				.id(venda.getId())
+				.usernameUsuario(venda.getUsuario().getUsername())
+				.idCliente(venda.getCliente().getId())
+				.idPagamento(venda.getPagamento().getId())
+				.dataVenda(venda.getData())
+				.vendaItemList(
+						venda.getVendaItens() != null ?
+								venda.getVendaItens().stream()
+										.map(vendaItem -> VendaItemDTO.builder()
+												.produtoId(vendaItem.getProduto().getId())
+												.quantidadeVenda(vendaItem.getQuantidadeVenda())
+												.build())
+										.collect(Collectors.toList())
+								: null
+				)
+				.build();
 	}
 }
