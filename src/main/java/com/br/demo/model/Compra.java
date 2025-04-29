@@ -3,6 +3,7 @@ package com.br.demo.model;
 import com.br.demo.model.Pagamento;
 import com.br.demo.model.Usuario;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -26,6 +27,7 @@ public class Compra {
     private UUID id;
 
     @Column(nullable = false)
+    @NotNull(message = "Data é obrigatório.")
     private LocalDate data;
 
     @OneToMany(mappedBy = "compra", cascade = CascadeType.ALL, fetch = FetchType.LAZY)

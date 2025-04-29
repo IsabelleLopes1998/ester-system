@@ -1,6 +1,7 @@
 package com.br.demo.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -30,10 +31,11 @@ public class CompraItem {
     private Compra compra;
 
     @Column(nullable = false)
-    private Integer quantidadeVenda;
+    @NotNull(message = "Quantidade é obrigatório.")
+    private Integer quantidade;
 
     @Column(nullable = false)
-    private BigDecimal valorUnitario;
+    private BigDecimal preçoUnitario;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     @CreationTimestamp

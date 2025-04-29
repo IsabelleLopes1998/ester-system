@@ -61,8 +61,8 @@ public class CompraService {
                     .id(compraItemId)
                     .produto(produto)
                     .compra(compraFinal)
-                    .quantidadeVenda(itemDTO.getQuantidadeVenda())
-                    .valorUnitario(itemDTO.getValorUnitario())
+                    .quantidade(itemDTO.getQuantidadeVenda())
+                    .preçoUnitario(itemDTO.getValorUnitario())
                     .build();
         }).collect(Collectors.toList());
 
@@ -72,8 +72,8 @@ public class CompraService {
         List<CompraItemResponseDTO> itensResponse = compraItens.stream()
                 .map(item -> new CompraItemResponseDTO(
                         item.getProduto().getNome(),
-                        item.getValorUnitario(),
-                        item.getQuantidadeVenda()
+                        item.getPreçoUnitario(),
+                        item.getQuantidade()
                 ))
                 .collect(Collectors.toList());
 
@@ -94,8 +94,8 @@ public class CompraService {
                     List<CompraItemResponseDTO> itensResponse = compra.getCompraItens().stream()
                             .map(item -> new CompraItemResponseDTO(
                                     item.getProduto().getNome(),
-                                    item.getValorUnitario(),
-                                    item.getQuantidadeVenda()
+                                    item.getPreçoUnitario(),
+                                    item.getQuantidade()
                             ))
                             .collect(Collectors.toList());
 
