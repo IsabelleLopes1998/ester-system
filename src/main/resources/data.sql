@@ -60,7 +60,7 @@ VALUES
 
 
 -- Produtos
-INSERT INTO produto (id, nome, valor, quantidade_estoque, id_categoria, id_subcategoria)
+INSERT INTO produto (id, nome, preço_vigente, quantidade_estoque, id_categoria, id_subcategoria)
 VALUES
   (uuid_generate_v4(), 'Anel de Ouro', 350.00, 0,
     (SELECT id FROM categoria WHERE nome = 'Categoria Joias'),
@@ -76,7 +76,7 @@ VALUES
         (SELECT id FROM subcategoria WHERE nome = 'Pulseiras'));
 
 -- Histórico de valores dos produtos
-INSERT INTO historico_valor (id, data, valor, id_produto)
+INSERT INTO historico_valor (id, data, preço_unitario, id_produto)
 VALUES
   (uuid_generate_v4(), '2025-01-01', 350.00, (SELECT id FROM produto WHERE nome = 'Anel de Ouro')),
   (uuid_generate_v4(), '2025-02-01', 180.00, (SELECT id FROM produto WHERE nome = 'Pulseira de Prata')),
