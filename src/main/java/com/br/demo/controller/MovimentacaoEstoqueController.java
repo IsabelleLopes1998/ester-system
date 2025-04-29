@@ -3,7 +3,7 @@ package com.br.demo.controller;
 import com.br.demo.dto.request.MovimentacaoEstoqueRequestDTO;
 import com.br.demo.dto.response.MovimentacaoEstoqueResponseDTO;
 import com.br.demo.model.Usuario;
-import com.br.demo.service.MovimentacaoEstoque;
+import com.br.demo.service.MovimentacaoEstoqueService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -12,12 +12,12 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/acerto-itens")
+@RequestMapping("/movimentacao-estoque")
 public class MovimentacaoEstoqueController {
 	
-	private final MovimentacaoEstoque service;
+	private final MovimentacaoEstoqueService service;
 	
-	public MovimentacaoEstoqueController (MovimentacaoEstoque service) {
+	public MovimentacaoEstoqueController (MovimentacaoEstoqueService service) {
 		this.service = service;
 	}
 	

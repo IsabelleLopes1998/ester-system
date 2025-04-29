@@ -4,6 +4,7 @@ import com.br.demo.dto.request.MovimentacaoEstoqueRequestDTO;
 import com.br.demo.dto.response.MovimentacaoEstoqueResponseDTO;
 import com.br.demo.enums.TipoMovimentacao;
 import com.br.demo.model.*;
+import com.br.demo.repository.MovimentacaoEstoqueRepository;
 import com.br.demo.repository.ProdutoRepository;
 import org.springframework.stereotype.Service;
 
@@ -12,20 +13,20 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
-public class MovimentacaoEstoque {
+public class MovimentacaoEstoqueService {
 	
-	private final com.br.demo.repository.MovimentacaoEstoque itemRepository;
+	private final MovimentacaoEstoqueRepository movimentacaoEstoqueRepository;
 	private final ProdutoRepository produtoRepository;
 	
 	
-	public MovimentacaoEstoque (com.br.demo.repository.MovimentacaoEstoque itemRepository, ProdutoRepository produtoRepository) {
-		this.itemRepository = itemRepository;
+	public MovimentacaoEstoqueService (MovimentacaoEstoqueRepository movimentacaoEstoqueRepository, ProdutoRepository produtoRepository) {
+		this.movimentacaoEstoqueRepository = movimentacaoEstoqueRepository;
 		this.produtoRepository = produtoRepository;
 		
 	}
 	
 	public List<MovimentacaoEstoqueResponseDTO> listar() {
-		return itemRepository.findAll().stream()
+		return movimentacaoEstoqueRepository.findAll().stream()
 					   .map(this::toDTO)
 					   .collect(Collectors.toList());
 	}
@@ -43,12 +44,12 @@ public class MovimentacaoEstoque {
 				                  .usuario(usuario)
 								  .build();
 		
-		item = itemRepository.save(item);
+		item = movimentacaoEstoqueRepository.save(item);
 		return toDTO(item);
 	}
 	
 	public void excluir(UUID idAcerto) {
-		itemRepository.deleteById(idAcerto);
+		movimentacaoEstoqueRepository.deleteById(idAcerto);
 	}
 	
 	private MovimentacaoEstoqueResponseDTO toDTO(com.br.demo.model.MovimentacaoEstoque item) {
@@ -63,7 +64,7 @@ public class MovimentacaoEstoque {
 	}
 	
 	public MovimentacaoEstoqueResponseDTO buscarPorId(UUID id) {
-		com.br.demo.model.MovimentacaoEstoque item = itemRepository.findById(id)
+		com.br.demo.model.MovimentacaoEstoque item = movimentacaoEstoqueRepository.findById(id)
 								  .orElseThrow(() -> new IllegalArgumentException("AcertoItem não encontrado com ID: " + id));
 		
 		return toDTO(item);
