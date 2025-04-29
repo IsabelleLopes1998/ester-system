@@ -26,10 +26,10 @@ public class VendaItem {
 	private Venda venda;
 	
 	@Column(nullable = false)
-	private Integer quantidadeVenda;
+	private Integer quantidade;
 
 	@Column(nullable = false, precision = 10, scale = 2)
-	private BigDecimal valorUnitario;
+	private BigDecimal preçoUnitario;
 
 	@Column(name = "created_at", nullable = false, updatable = false)
 	@CreationTimestamp

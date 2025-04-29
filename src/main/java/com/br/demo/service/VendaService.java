@@ -94,8 +94,8 @@ public class VendaService {
 					.id(vendaItemId)
 					.venda(venda)
 					.produto(produto)
-					.quantidadeVenda(vendaItem.getQuantidadeVenda())
-					.valorUnitario(precoVingente.getValor())
+					.quantidade(vendaItem.getQuantidadeVenda())
+					.preçoUnitario(precoVingente.getPreçoUnitario())
 					.build();
 
 			vendaItemRepository.save(vendaItemEntity);
@@ -145,20 +145,20 @@ public class VendaService {
 
 			if (vendaItemExistenteOpt.isPresent()) {
 				vendaItem = vendaItemExistenteOpt.get();
-				vendaItem.setQuantidadeVenda(vendaItemDTO.getQuantidadeVenda());
+				vendaItem.setQuantidade(vendaItemDTO.getQuantidadeVenda());
 			} else {
 				vendaItem = new VendaItem();
 				vendaItem.setId(new VendaItemId(venda.getId(), produto.getId()));
 				vendaItem.setVenda(venda);
 				vendaItem.setProduto(produto);
-				vendaItem.setQuantidadeVenda(vendaItemDTO.getQuantidadeVenda());
+				vendaItem.setQuantidade(vendaItemDTO.getQuantidadeVenda());
 			}
 
 			if (dataAlterada) {
 				HistoricoValor precoVigente = historicoValorRepository.findPrecoVigenteByProdutoAndData(produto.getId(), venda.getData())
 						.orElseThrow(() -> new IllegalArgumentException("Preço não encontrado para o produto na data informada"));
 
-				vendaItem.setValorUnitario(precoVigente.getValor());
+				vendaItem.setPreçoUnitario(precoVigente.getPreçoUnitario());
 			}
 
 			vendaItemRepository.save(vendaItem);
@@ -186,7 +186,7 @@ public class VendaService {
 								venda.getVendaItens().stream()
 										.map(vendaItem -> VendaItemDTO.builder()
 												.produtoId(vendaItem.getProduto().getId())
-												.quantidadeVenda(vendaItem.getQuantidadeVenda())
+												.quantidadeVenda(vendaItem.getQuantidade())
 												.build())
 										.collect(Collectors.toList())
 								: null

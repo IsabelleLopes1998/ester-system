@@ -20,7 +20,7 @@ public class VendaItemService {
 		return vendaItemRepository.findAll().stream()
 					   .map(item -> VendaItemResponseDTO.builder()
 											.nomeProduto(item.getProduto().getNome())
-											.quantidadeVenda(item.getQuantidadeVenda())
+											.quantidadeVenda(item.getQuantidade())
 											.build())
 					   .collect(Collectors.toList());
 	}
