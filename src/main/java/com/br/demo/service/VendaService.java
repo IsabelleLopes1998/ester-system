@@ -9,10 +9,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -57,12 +54,12 @@ public class VendaService {
 	public VendaResponseDTO createVenda(VendaRequestDTO dto, Usuario usuario) {
 		Cliente cliente = clienteRepository.findById(dto.getIdCliente()).orElse(null);
 		Pagamento pagamento = pagamentoRepository.findById(dto.getIdPagamento()).orElse(null);
-		
+
 		if (usuario == null || cliente == null || pagamento == null) {
-			return null;
+			throw new IllegalArgumentException("Usuário, cliente ou pagamento não encontrados.");
 		}
 
-		for(VendaItemDTO vendaItem : dto.getVendaItemList()) {
+		for (VendaItemDTO vendaItem : dto.getVendaItemList()) {
 			Produto produto = produtoRepository.findById(vendaItem.getProdutoId())
 					.orElseThrow(() -> new IllegalArgumentException("Produto não encontrado: " + vendaItem.getProdutoId()));
 
@@ -70,39 +67,43 @@ public class VendaService {
 				throw new IllegalArgumentException("Estoque insuficiente para o produto: " + produto.getNome());
 			}
 		}
-		
+
 		Venda venda = Venda.builder()
-							  .data(dto.getData())
-							  .usuario(usuario)
-							  .cliente(cliente)
-							  .pagamento(pagamento)
-							  .build();
-		
-		venda = vendaRepository.save(venda);
+				.data(dto.getData())
+				.usuario(usuario)
+				.cliente(cliente)
+				.pagamento(pagamento)
+				.build();
 
-		for (VendaItemDTO vendaItem : dto.getVendaItemList()) {
-			Produto produto = produtoRepository.findById(vendaItem.getProdutoId())
-					.orElseThrow(() -> new IllegalArgumentException("Produto não encontrado: " + vendaItem.getProdutoId()));
+		List<VendaItem> vendaItens = new ArrayList<>();
 
-			produto.setQuantidadeEstoque(produto.getQuantidadeEstoque() - vendaItem.getQuantidadeVenda());
+		for (VendaItemDTO vendaItemDTO : dto.getVendaItemList()) {
+			Produto produto = produtoRepository.findById(vendaItemDTO.getProdutoId())
+					.orElseThrow(() -> new IllegalArgumentException("Produto não encontrado: " + vendaItemDTO.getProdutoId()));
+
+			produto.setQuantidadeEstoque(produto.getQuantidadeEstoque() - vendaItemDTO.getQuantidadeVenda());
 			produtoRepository.save(produto);
 
-			VendaItemId vendaItemId = new VendaItemId(venda.getId(), produto.getId());
-			HistoricoValor precoVingente = historicoValorRepository.findPrecoVigenteByProdutoAndData(produto.getId(), venda.getData())
-								.orElseThrow(() -> new IllegalArgumentException("Preco do Produto não encontrado: " + vendaItem.getProdutoId()));
-			VendaItem vendaItemEntity = VendaItem.builder()
-					.id(vendaItemId)
+			HistoricoValor precoVigente = historicoValorRepository.findPrecoVigenteByProdutoAndData(
+					produto.getId(), dto.getData()
+			).orElseThrow(() -> new IllegalArgumentException("Preço não encontrado para produto " + produto.getId()));
+
+			VendaItem vendaItem = VendaItem.builder()
+					.id(new VendaItemId(null, produto.getId())) // ID será setado pelo Hibernate após persistência
 					.venda(venda)
 					.produto(produto)
-					.quantidade(vendaItem.getQuantidadeVenda())
-					.preçoUnitario(precoVingente.getPreçoUnitario())
+					.quantidade(vendaItemDTO.getQuantidadeVenda())
+					.preçoUnitario(precoVigente.getPreçoUnitario())
 					.build();
 
-			vendaItemRepository.save(vendaItemEntity);
+			vendaItens.add(vendaItem);
 		}
 
+		venda.setVendaItens(vendaItens);
 
-		return toResponseDTO(venda);
+		Venda savedVenda = vendaRepository.save(venda);
+
+		return toResponseDTO(savedVenda);
 	}
 
 	@Transactional
@@ -117,8 +118,7 @@ public class VendaService {
 				.orElseThrow(() -> new IllegalArgumentException("Pagamento não encontrado: " + dto.getIdPagamento()));
 
 		boolean dataAlterada = !venda.getData().equals(dto.getData());
-		venda.setData(dto.getData()); // Atualiza a data da venda, caso tenha sido modificada
-
+		venda.setData(dto.getData());
 		venda.setCliente(cliente);
 		venda.setPagamento(pagamento);
 
@@ -127,9 +127,16 @@ public class VendaService {
 				.collect(Collectors.toSet());
 
 		List<VendaItem> vendaItensExistentes = venda.getVendaItens();
-		for (VendaItem vendaItem : vendaItensExistentes) {
+
+		for (Iterator<VendaItem> iterator = vendaItensExistentes.iterator(); iterator.hasNext(); ) {
+			VendaItem vendaItem = iterator.next();
 			if (!idsProdutosNoDTO.contains(vendaItem.getProduto().getId())) {
-				vendaItemRepository.delete(vendaItem); // Remover item que não foi enviado no DTO
+				Produto produto = vendaItem.getProduto();
+				produto.setQuantidadeEstoque(produto.getQuantidadeEstoque() + vendaItem.getQuantidade());
+				produtoRepository.save(produto);
+
+				vendaItemRepository.delete(vendaItem);
+				iterator.remove();
 			}
 		}
 
@@ -145,16 +152,22 @@ public class VendaService {
 
 			if (vendaItemExistenteOpt.isPresent()) {
 				vendaItem = vendaItemExistenteOpt.get();
-				vendaItem.setQuantidade(vendaItemDTO.getQuantidadeVenda());
+
+				produto.setQuantidadeEstoque(produto.getQuantidadeEstoque() + vendaItem.getQuantidade());
 			} else {
 				vendaItem = new VendaItem();
 				vendaItem.setId(new VendaItemId(venda.getId(), produto.getId()));
 				vendaItem.setVenda(venda);
 				vendaItem.setProduto(produto);
-				vendaItem.setQuantidade(vendaItemDTO.getQuantidadeVenda());
+				vendaItensExistentes.add(vendaItem);
 			}
 
-			if (dataAlterada) {
+			vendaItem.setQuantidade(vendaItemDTO.getQuantidadeVenda());
+			produto.setQuantidadeEstoque(produto.getQuantidadeEstoque() - vendaItemDTO.getQuantidadeVenda());
+
+			produtoRepository.save(produto);
+
+			if (dataAlterada || !vendaItemExistenteOpt.isPresent()) {
 				HistoricoValor precoVigente = historicoValorRepository.findPrecoVigenteByProdutoAndData(produto.getId(), venda.getData())
 						.orElseThrow(() -> new IllegalArgumentException("Preço não encontrado para o produto na data informada"));
 
@@ -168,7 +181,6 @@ public class VendaService {
 
 		return toResponseDTO(venda);
 	}
-
 
 	public void deleteVenda(UUID id) {
 		vendaRepository.deleteById(id);
