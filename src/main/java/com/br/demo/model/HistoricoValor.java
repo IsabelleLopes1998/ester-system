@@ -1,6 +1,7 @@
 package com.br.demo.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -23,10 +24,12 @@ public class HistoricoValor {
     private UUID id;
 
     @Column(nullable = false)
+    @NotNull(message = "Data é obrigatório.")
     private LocalDate data;
 
     @Column(nullable = false)
-    private BigDecimal valor;
+    @NotNull(message = "Preço é obrigatório.")
+    private BigDecimal preçoUnitario;
 
     @ManyToOne
     @JoinColumn(name = "id_produto", nullable = false)
