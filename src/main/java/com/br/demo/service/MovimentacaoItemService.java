@@ -1,12 +1,11 @@
 package com.br.demo.service;
 
-import com.br.demo.dto.request.AcertoItemRequestDTO;
-import com.br.demo.dto.response.AcertoItemResponseDTO;
-import com.br.demo.enums.TipoAcerto;
+import com.br.demo.dto.request.MovimentacaoItemRequestDTO;
+import com.br.demo.dto.response.MovimentacaoItemResponseDTO;
+import com.br.demo.enums.TipoMovimentacao;
 import com.br.demo.model.*;
-import com.br.demo.repository.AcertoItemRepository;
+import com.br.demo.repository.MovimentacaoItemRepository;
 import com.br.demo.repository.ProdutoRepository;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,33 +13,33 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
-public class AcertoItemService {
+public class MovimentacaoItemService {
 	
-	private final AcertoItemRepository itemRepository;
+	private final MovimentacaoItemRepository itemRepository;
 	private final ProdutoRepository produtoRepository;
 	
 	
-	public AcertoItemService(AcertoItemRepository itemRepository, ProdutoRepository produtoRepository) {
+	public MovimentacaoItemService (MovimentacaoItemRepository itemRepository, ProdutoRepository produtoRepository) {
 		this.itemRepository = itemRepository;
 		this.produtoRepository = produtoRepository;
 		
 	}
 	
-	public List<AcertoItemResponseDTO> listar() {
+	public List<MovimentacaoItemResponseDTO> listar() {
 		return itemRepository.findAll().stream()
 					   .map(this::toDTO)
 					   .collect(Collectors.toList());
 	}
 	
-	public AcertoItemResponseDTO criar(AcertoItemRequestDTO dto, Usuario usuario) {
+	public MovimentacaoItemResponseDTO criar(MovimentacaoItemRequestDTO dto, Usuario usuario) {
 		Produto produto = produtoRepository.findById(dto.getIdProduto())
 								  .orElseThrow(() -> new IllegalArgumentException("Produto não encontrado"));
 		
-		AcertoItem item = AcertoItem.builder()
+		MovimentacaoEstoque item = MovimentacaoEstoque.builder()
 								  .produto(produto)
 								  .data(dto.getData())
 								  .quantidade(dto.getQuantidade())
-				                  .tipoAcerto(TipoAcerto.valueOf(dto.getTipoAcerto()))
+				                  .tipoMovimentacao(TipoMovimentacao.valueOf(dto.getTipoAcerto()))
 								  .observacao(dto.getObservacao())
 				                  .usuario(usuario)
 								  .build();
@@ -53,19 +52,19 @@ public class AcertoItemService {
 		itemRepository.deleteById(idAcerto);
 	}
 	
-	private AcertoItemResponseDTO toDTO(AcertoItem item) {
-		return new AcertoItemResponseDTO(
+	private MovimentacaoItemResponseDTO toDTO(MovimentacaoEstoque item) {
+		return new MovimentacaoItemResponseDTO(
 				item.getProduto().getId(),
 				item.getData(),
 				item.getQuantidade(),
 				item.getObservacao(),
-				item.getTipoAcerto(),
+				item.getTipoMovimentacao(),
 				item.getUsuario().getId()
 		);
 	}
 	
-	public AcertoItemResponseDTO buscarPorId(UUID id) {
-		AcertoItem item = itemRepository.findById(id)
+	public MovimentacaoItemResponseDTO buscarPorId(UUID id) {
+		MovimentacaoEstoque item = itemRepository.findById(id)
 								  .orElseThrow(() -> new IllegalArgumentException("AcertoItem não encontrado com ID: " + id));
 		
 		return toDTO(item);

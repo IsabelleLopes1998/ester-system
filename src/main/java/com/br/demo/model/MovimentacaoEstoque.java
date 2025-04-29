@@ -1,6 +1,6 @@
 package com.br.demo.model;
 
-import com.br.demo.enums.TipoAcerto;
+import com.br.demo.enums.TipoMovimentacao;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -17,7 +17,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @Builder
-public class AcertoItem {
+public class MovimentacaoEstoque {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.UUID)
@@ -41,7 +41,7 @@ public class AcertoItem {
 	
 	@Enumerated(EnumType.STRING)
 	@Column(nullable = false)
-	private TipoAcerto tipoAcerto;
+	private TipoMovimentacao tipoMovimentacao;
 	
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "id_usuario", nullable = false)

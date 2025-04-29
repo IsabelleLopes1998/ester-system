@@ -1,9 +1,8 @@
 package com.br.demo.dto.response;
 
-import com.br.demo.enums.TipoAcerto;
+import com.br.demo.enums.TipoMovimentacao;
 import lombok.*;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.UUID;
 
@@ -11,11 +10,11 @@ import java.util.UUID;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class AcertoItemResponseDTO {
+public class MovimentacaoItemResponseDTO {
 	private UUID idProduto;
 	private LocalDate data;
 	private Integer quantidade;
 	private String observacao;
-	private TipoAcerto tipoAcerto;
+	private TipoMovimentacao tipoMovimentacao;
 	private UUID idUsuario;
 }
