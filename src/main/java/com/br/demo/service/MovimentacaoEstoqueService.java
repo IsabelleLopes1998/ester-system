@@ -54,6 +54,7 @@ public class MovimentacaoEstoqueService {
 	
 	private MovimentacaoEstoqueResponseDTO toDTO(com.br.demo.model.MovimentacaoEstoque item) {
 		return new MovimentacaoEstoqueResponseDTO(
+				item.getId(),
 				item.getProduto().getId(),
 				item.getData(),
 				item.getQuantidade(),

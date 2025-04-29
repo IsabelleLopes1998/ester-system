@@ -11,6 +11,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 public class MovimentacaoEstoqueResponseDTO {
+	private UUID id;
 	private UUID idProduto;
 	private LocalDate data;
 	private Integer quantidade;
