@@ -42,7 +42,7 @@ public class ProdutoService {
                 .map(produto -> new ProdutoResponseDTO(
                         produto.getId(),
                         produto.getNome(),
-                        produto.getValor(),
+                        produto.getPreçoVigente(),
                         produto.getQuantidadeEstoque(),
                         produto.getCategoria().getNome(),
                         produto.getSubcategoria() != null ? produto.getSubcategoria().getNome() : null
@@ -55,7 +55,7 @@ public class ProdutoService {
                 .map(produto -> new ProdutoResponseDTO(
                         produto.getId(),
                         produto.getNome(),
-                        produto.getValor(),
+                        produto.getPreçoVigente(),
                         produto.getQuantidadeEstoque(),
                         produto.getCategoria().getNome(),
                         produto.getSubcategoria() != null ? produto.getSubcategoria().getNome() : null
@@ -78,7 +78,7 @@ public class ProdutoService {
         // apaguei o .usuario(usuario)
         Produto produto = Produto.builder()
                 .nome(dto.getNome())
-                .valor(dto.getValor())
+                .preçoVigente(dto.getValor())
                 .quantidadeEstoque(dto.getQuantidadeEstoque())
                 .categoria(categoria)
                 .subcategoria(subcategoria)
@@ -89,7 +89,7 @@ public class ProdutoService {
         return new ProdutoResponseDTO(
                 produto.getId(),
                 produto.getNome(),
-                produto.getValor(),
+                produto.getPreçoVigente(),
                 produto.getQuantidadeEstoque(),
                 produto.getCategoria().getNome(),
                 produto.getSubcategoria() != null ? produto.getSubcategoria().getNome() : null
@@ -102,7 +102,7 @@ public class ProdutoService {
         if (optionalProduto.isPresent()) {
             Produto produto = optionalProduto.get();
             produto.setNome(dto.getNome());
-            produto.setValor(dto.getValor());
+            produto.setPreçoVigente(dto.getValor());
             produto.setQuantidadeEstoque(dto.getQuantidadeEstoque());
 
             Categoria categoria = categoriaRepository.findById(dto.getIdCategoria()).orElse(null);
@@ -121,7 +121,7 @@ public class ProdutoService {
             return new ProdutoResponseDTO(
                     produto.getId(),
                     produto.getNome(),
-                    produto.getValor(),
+                    produto.getPreçoVigente(),
                     produto.getQuantidadeEstoque(),
                     produto.getCategoria().getNome(),
                     produto.getSubcategoria() != null ? produto.getSubcategoria().getNome() : null

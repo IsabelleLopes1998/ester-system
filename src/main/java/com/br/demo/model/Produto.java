@@ -25,7 +25,7 @@ public class Produto {
     private String nome;
 
     @Column(nullable = false, precision = 10, scale = 2)
-    private BigDecimal valor;
+    private BigDecimal preçoVigente;
 
     @Column(nullable = false)
     private Integer quantidadeEstoque;
