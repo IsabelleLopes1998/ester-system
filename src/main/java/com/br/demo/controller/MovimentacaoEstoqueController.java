@@ -1,9 +1,9 @@
 package com.br.demo.controller;
 
-import com.br.demo.dto.request.AcertoItemRequestDTO;
-import com.br.demo.dto.response.AcertoItemResponseDTO;
+import com.br.demo.dto.request.MovimentacaoEstoqueRequestDTO;
+import com.br.demo.dto.response.MovimentacaoEstoqueResponseDTO;
 import com.br.demo.model.Usuario;
-import com.br.demo.service.AcertoItemService;
+import com.br.demo.service.MovimentacaoEstoque;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -13,21 +13,21 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/acerto-itens")
-public class AcertoItemController {
+public class MovimentacaoEstoqueController {
 	
-	private final AcertoItemService service;
+	private final MovimentacaoEstoque service;
 	
-	public AcertoItemController(AcertoItemService service) {
+	public MovimentacaoEstoqueController (MovimentacaoEstoque service) {
 		this.service = service;
 	}
 	
 	@GetMapping
-	public ResponseEntity<List<AcertoItemResponseDTO>> listar() {
+	public ResponseEntity<List<MovimentacaoEstoqueResponseDTO>> listar() {
 		return ResponseEntity.ok(service.listar());
 	}
 	
 	@PostMapping
-	public ResponseEntity<AcertoItemResponseDTO> criar(@RequestBody AcertoItemRequestDTO dto, @AuthenticationPrincipal Usuario usuario) {
+	public ResponseEntity<MovimentacaoEstoqueResponseDTO> criar(@RequestBody MovimentacaoEstoqueRequestDTO dto, @AuthenticationPrincipal Usuario usuario) {
 		System.out.println(usuario.getUsername());
 		return ResponseEntity.ok(service.criar(dto,usuario));
 	}
@@ -39,7 +39,7 @@ public class AcertoItemController {
 	}
 	
 	@GetMapping("/{id}")
-	public ResponseEntity<AcertoItemResponseDTO> buscarPorId(@PathVariable UUID id) {
+	public ResponseEntity<MovimentacaoEstoqueResponseDTO> buscarPorId(@PathVariable UUID id) {
 		return ResponseEntity.ok(service.buscarPorId(id));
 	}
 }

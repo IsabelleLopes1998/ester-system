@@ -2,7 +2,6 @@ package com.br.demo.dto.request;
 
 import lombok.*;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.UUID;
 
@@ -10,7 +9,7 @@ import java.util.UUID;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class AcertoItemRequestDTO {
+public class MovimentacaoEstoqueRequestDTO {
 	private UUID idProduto;
 	private LocalDate data;
 	private Integer quantidade;

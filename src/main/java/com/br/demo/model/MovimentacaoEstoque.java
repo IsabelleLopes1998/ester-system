@@ -21,7 +21,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @Builder
-public class AcertoItem {
+public class MovimentacaoEstoque {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.UUID)
