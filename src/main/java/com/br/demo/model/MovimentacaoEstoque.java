@@ -1,6 +1,6 @@
 package com.br.demo.model;
 
-import com.br.demo.enums.TipoAcerto;
+import com.br.demo.enums.TipoMovimentacao;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Min;
@@ -53,7 +53,7 @@ public class MovimentacaoEstoque {
 	@Enumerated(EnumType.STRING)
 	@Column(nullable = false)
 	@NotNull(message = "Tipo de acerto é obrigatório.")
-	private TipoAcerto tipoAcerto;
+	private TipoMovimentacao tipoMovimentacao;
 
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "id_usuario", nullable = false)

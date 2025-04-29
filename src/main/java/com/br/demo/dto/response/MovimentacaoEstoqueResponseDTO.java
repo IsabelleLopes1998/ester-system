@@ -1,6 +1,6 @@
 package com.br.demo.dto.response;
 
-import com.br.demo.enums.TipoAcerto;
+import com.br.demo.enums.TipoMovimentacao;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -15,6 +15,6 @@ public class MovimentacaoEstoqueResponseDTO {
 	private LocalDate data;
 	private Integer quantidade;
 	private String observacao;
-	private TipoAcerto tipoAcerto;
+	private TipoMovimentacao tipoMovimentacao;
 	private UUID idUsuario;
 }

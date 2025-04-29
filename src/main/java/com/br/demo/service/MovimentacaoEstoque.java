@@ -2,7 +2,7 @@ package com.br.demo.service;
 
 import com.br.demo.dto.request.MovimentacaoEstoqueRequestDTO;
 import com.br.demo.dto.response.MovimentacaoEstoqueResponseDTO;
-import com.br.demo.enums.TipoAcerto;
+import com.br.demo.enums.TipoMovimentacao;
 import com.br.demo.model.*;
 import com.br.demo.repository.ProdutoRepository;
 import org.springframework.stereotype.Service;
@@ -38,7 +38,7 @@ public class MovimentacaoEstoque {
 								  .produto(produto)
 								  .data(dto.getData())
 								  .quantidade(dto.getQuantidade())
-				                  .tipoAcerto(TipoAcerto.valueOf(dto.getTipoAcerto()))
+				                  .tipoMovimentacao(TipoMovimentacao.valueOf(dto.getTipoAcerto()))
 								  .observacao(dto.getObservacao())
 				                  .usuario(usuario)
 								  .build();
@@ -57,7 +57,7 @@ public class MovimentacaoEstoque {
 				item.getData(),
 				item.getQuantidade(),
 				item.getObservacao(),
-				item.getTipoAcerto(),
+				item.getTipoMovimentacao(),
 				item.getUsuario().getId()
 		);
 	}

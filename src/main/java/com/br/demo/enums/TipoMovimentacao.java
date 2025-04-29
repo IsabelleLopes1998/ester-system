@@ -1,6 +1,6 @@
 package com.br.demo.enums;
 
-public enum TipoAcerto {
+public enum TipoMovimentacao {
 	ENTRADA,
 	SAIDA,
 	ENTRADA_MANUAL,
