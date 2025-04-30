@@ -18,4 +18,6 @@ public class MovimentacaoEstoqueResponseDTO {
 	private String observacao;
 	private TipoMovimentacao tipoMovimentacao;
 	private UUID idUsuario;
+	private UUID idCompra;
+	private UUID idVenda;
 }

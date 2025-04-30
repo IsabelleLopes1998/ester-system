@@ -4,8 +4,10 @@ import com.br.demo.dto.request.MovimentacaoEstoqueRequestDTO;
 import com.br.demo.dto.response.MovimentacaoEstoqueResponseDTO;
 import com.br.demo.enums.TipoMovimentacao;
 import com.br.demo.model.*;
+import com.br.demo.repository.CompraRepository;
 import com.br.demo.repository.MovimentacaoEstoqueRepository;
 import com.br.demo.repository.ProdutoRepository;
+import com.br.demo.repository.VendaRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,12 +19,14 @@ public class MovimentacaoEstoqueService {
 	
 	private final MovimentacaoEstoqueRepository movimentacaoEstoqueRepository;
 	private final ProdutoRepository produtoRepository;
-	
-	
-	public MovimentacaoEstoqueService (MovimentacaoEstoqueRepository movimentacaoEstoqueRepository, ProdutoRepository produtoRepository) {
+	private final VendaRepository vendaRepository;
+	private final CompraRepository compraRepository;
+
+	public MovimentacaoEstoqueService (MovimentacaoEstoqueRepository movimentacaoEstoqueRepository, ProdutoRepository produtoRepository, VendaRepository vendaRepository, CompraRepository compraRepository) {
 		this.movimentacaoEstoqueRepository = movimentacaoEstoqueRepository;
 		this.produtoRepository = produtoRepository;
-		
+		this.vendaRepository = vendaRepository;
+		this.compraRepository = compraRepository;
 	}
 	
 	public List<MovimentacaoEstoqueResponseDTO> listar() {
@@ -40,13 +44,31 @@ public class MovimentacaoEstoqueService {
 		tipoMovimentacao.aplicar(produto, dto.getQuantidade());
 		produtoRepository.save(produto);
 
-		com.br.demo.model.MovimentacaoEstoque item = com.br.demo.model.MovimentacaoEstoque.builder()
+		if (dto.getIdVenda() != null && dto.getIdCompra() != null) {
+			throw new RuntimeException("uma movimentacao não pode estar atribuida a uma compra e a uma venda ao mesmo tempo!");
+		}
+
+		Venda venda = null;
+		Compra compra = null;
+		if(dto.getIdVenda() != null ) {
+			venda = vendaRepository.findById(dto.getIdVenda())
+					.orElseThrow(() -> new RuntimeException("Venda não encontrada"));
+		}
+		if(dto.getIdCompra() != null ) {
+			compra = compraRepository.findById(dto.getIdCompra())
+					.orElseThrow(() -> new RuntimeException("Compra não encontrada"));
+		}
+
+
+		MovimentacaoEstoque item = MovimentacaoEstoque.builder()
 								  .produto(produto)
 								  .data(dto.getData())
 								  .quantidade(dto.getQuantidade())
 				                  .tipoMovimentacao(TipoMovimentacao.valueOf(dto.getTipoAcerto()))
 								  .observacao(dto.getObservacao())
 				                  .usuario(usuario)
+								  .compra(compra)
+				                  .venda(venda)
 								  .build();
 		
 		item = movimentacaoEstoqueRepository.save(item);
@@ -58,7 +80,7 @@ public class MovimentacaoEstoqueService {
 		movimentacaoEstoqueRepository.deleteById(idAcerto);
 	}
 	
-	private MovimentacaoEstoqueResponseDTO toDTO(com.br.demo.model.MovimentacaoEstoque item) {
+	private MovimentacaoEstoqueResponseDTO toDTO(MovimentacaoEstoque item) {
 		return new MovimentacaoEstoqueResponseDTO(
 				item.getId(),
 				item.getProduto().getId(),
@@ -66,7 +88,9 @@ public class MovimentacaoEstoqueService {
 				item.getQuantidade(),
 				item.getObservacao(),
 				item.getTipoMovimentacao(),
-				item.getUsuario().getId()
+				item.getUsuario().getId(),
+				item.getCompra() != null ? item.getCompra().getId() : null,
+				item.getVenda() != null ? item.getVenda().getId() : null
 		);
 	}
 	

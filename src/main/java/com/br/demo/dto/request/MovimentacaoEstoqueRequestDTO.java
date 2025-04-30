@@ -15,4 +15,6 @@ public class MovimentacaoEstoqueRequestDTO {
 	private Integer quantidade;
 	private String observacao;
 	private String tipoAcerto;
+	private UUID idCompra;
+	private UUID idVenda;
 }

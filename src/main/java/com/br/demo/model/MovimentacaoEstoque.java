@@ -60,6 +60,14 @@ public class MovimentacaoEstoque {
 	@NotNull(message = "Usuário é obrigatório.")
 	private Usuario usuario;
 
+	@ManyToOne(optional = true)
+	@JoinColumn(name = "id_venda")
+	private Venda venda;
+
+	@ManyToOne(optional = true)
+	@JoinColumn(name = "id_compra")
+	private Compra compra;
+
 	@Column(name = "created_at", nullable = false, updatable = false)
 	@CreationTimestamp
 	private LocalDateTime createdAt;
