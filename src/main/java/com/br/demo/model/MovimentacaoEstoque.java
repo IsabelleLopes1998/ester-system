@@ -52,7 +52,7 @@ public class MovimentacaoEstoque {
 
 	@Enumerated(EnumType.STRING)
 	@Column(nullable = false)
-	@NotNull(message = "Tipo de acerto é obrigatório.")
+	@NotNull(message = "Tipo movimentacao de estoque é obrigatório.")
 	private TipoMovimentacao tipoMovimentacao;
 
 	@ManyToOne(optional = false)
