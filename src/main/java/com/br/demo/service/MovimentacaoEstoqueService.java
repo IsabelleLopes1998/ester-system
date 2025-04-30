@@ -34,7 +34,12 @@ public class MovimentacaoEstoqueService {
 	public MovimentacaoEstoqueResponseDTO criar(MovimentacaoEstoqueRequestDTO dto, Usuario usuario) {
 		Produto produto = produtoRepository.findById(dto.getIdProduto())
 								  .orElseThrow(() -> new IllegalArgumentException("Produto não encontrado"));
-		
+
+		TipoMovimentacao tipoMovimentacao = TipoMovimentacao.valueOf(dto.getTipoAcerto());
+
+		tipoMovimentacao.aplicar(produto, dto.getQuantidade());
+		produtoRepository.save(produto);
+
 		com.br.demo.model.MovimentacaoEstoque item = com.br.demo.model.MovimentacaoEstoque.builder()
 								  .produto(produto)
 								  .data(dto.getData())
@@ -45,6 +50,7 @@ public class MovimentacaoEstoqueService {
 								  .build();
 		
 		item = movimentacaoEstoqueRepository.save(item);
+
 		return toDTO(item);
 	}
 	
