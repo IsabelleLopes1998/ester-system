@@ -2,6 +2,7 @@ package com.br.demo.service;
 
 import com.br.demo.dto.request.CompraItemRequestDTO;
 import com.br.demo.dto.request.CompraRequestDTO;
+import com.br.demo.dto.request.MovimentacaoEstoqueRequestDTO;
 import com.br.demo.dto.response.CompraItemResponseDTO;
 import com.br.demo.dto.response.CompraResponseDTO;
 import com.br.demo.model.*;
@@ -20,22 +21,27 @@ public class CompraService {
     private final CompraItemRepository compraItemRepository;
     private final ProdutoRepository produtoRepository;
     private final PagamentoRepository pagamentoRepository;
+    private final MovimentacaoEstoqueService movimentacaoEstoqueService;
     
     public CompraService(
             CompraRepository compraRepository,
             CompraItemRepository compraItemRepository,
             ProdutoRepository produtoRepository,
-            PagamentoRepository pagamentoRepository
+            PagamentoRepository pagamentoRepository,
+            MovimentacaoEstoqueService movimentacaoEstoqueService
     ) {
         this.compraRepository = compraRepository;
         this.compraItemRepository = compraItemRepository;
         this.produtoRepository = produtoRepository;
         this.pagamentoRepository = pagamentoRepository;
+        this.movimentacaoEstoqueService = movimentacaoEstoqueService;
     }
 
     @Transactional
     public CompraResponseDTO criarCompra(CompraRequestDTO dto, Usuario usuario) {
-        Pagamento pagamento = pagamentoRepository.findById(dto.getPagamentoId()).orElseThrow();
+        Pagamento pagamento = pagamentoRepository.findById(dto.getPagamentoId())
+                .orElseThrow(() -> new IllegalArgumentException("Pagamento não encontrado para produto " + dto.getPagamentoId()));
+
 
         Compra compra = Compra.builder()
                 .data(dto.getData())
@@ -52,7 +58,8 @@ public class CompraService {
             Produto produto = produtoRepository.findById(itemDTO.getProdutoId()).orElseThrow();
 
 
-            produto.setQuantidadeEstoque(produto.getQuantidadeEstoque() + itemDTO.getQuantidadeVenda());
+            MovimentacaoEstoqueRequestDTO novaMovimentacao = new MovimentacaoEstoqueRequestDTO(itemDTO.getProdutoId() ,dto.getData(), itemDTO.getQuantidadeVenda(), "COMPRA", "ENTRADA", compraFinal.getId(), null);
+            movimentacaoEstoqueService.criar(novaMovimentacao,usuario);
             produtoRepository.save(produto);
 
 

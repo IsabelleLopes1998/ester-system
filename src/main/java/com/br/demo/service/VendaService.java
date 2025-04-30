@@ -1,8 +1,10 @@
 package com.br.demo.service;
 
 import com.br.demo.dto.VendaItemDTO;
+import com.br.demo.dto.request.MovimentacaoEstoqueRequestDTO;
 import com.br.demo.dto.request.VendaRequestDTO;
 import com.br.demo.dto.response.VendaResponseDTO;
+import com.br.demo.enums.TipoMovimentacao;
 import com.br.demo.model.*;
 import com.br.demo.repository.*;
 import jakarta.transaction.Transactional;
@@ -21,6 +23,7 @@ public class VendaService {
 	private final ProdutoRepository produtoRepository;
 	private final VendaItemRepository vendaItemRepository;
 	private final HistoricoValorRepository historicoValorRepository;
+	private final MovimentacaoEstoqueService movimentacaoEstoqueService;
 
 	public VendaService(
 			VendaRepository vendaRepository,
@@ -28,7 +31,8 @@ public class VendaService {
 			PagamentoRepository pagamentoRepository ,
 			ClienteRepository clienteRepository,
 			ProdutoRepository produtoRepository,
-			HistoricoValorRepository historicoValorRepository
+			HistoricoValorRepository historicoValorRepository,
+			MovimentacaoEstoqueService movimentacaoEstoqueService
 	) {
 		this.vendaRepository = vendaRepository;
 		this.pagamentoRepository = pagamentoRepository;
@@ -36,6 +40,7 @@ public class VendaService {
 		this.produtoRepository = produtoRepository;
 		this.vendaItemRepository = vendaItemRepository;
 		this.historicoValorRepository = historicoValorRepository;
+		this.movimentacaoEstoqueService = movimentacaoEstoqueService;
 	}
 	
 	public List<VendaResponseDTO> getAllVendas() {
@@ -75,13 +80,25 @@ public class VendaService {
 				.pagamento(pagamento)
 				.build();
 
+		venda = vendaRepository.save(venda);
+
 		List<VendaItem> vendaItens = new ArrayList<>();
 
 		for (VendaItemDTO vendaItemDTO : dto.getVendaItemList()) {
 			Produto produto = produtoRepository.findById(vendaItemDTO.getProdutoId())
 					.orElseThrow(() -> new IllegalArgumentException("Produto não encontrado: " + vendaItemDTO.getProdutoId()));
 
-			produto.setQuantidadeEstoque(produto.getQuantidadeEstoque() - vendaItemDTO.getQuantidadeVenda());
+			MovimentacaoEstoqueRequestDTO novaMovimentacao = new MovimentacaoEstoqueRequestDTO(
+					vendaItemDTO.getProdutoId(),
+					dto.getData(),
+					vendaItemDTO.getQuantidadeVenda(),
+					"VENDA",
+					"SAIDA",
+					null,
+					venda.getId()
+			);
+
+			movimentacaoEstoqueService.criar(novaMovimentacao, usuario);
 			produtoRepository.save(produto);
 
 			HistoricoValor precoVigente = historicoValorRepository.findPrecoVigenteByProdutoAndData(
@@ -89,7 +106,7 @@ public class VendaService {
 			).orElseThrow(() -> new IllegalArgumentException("Preço não encontrado para produto " + produto.getId()));
 
 			VendaItem vendaItem = VendaItem.builder()
-					.id(new VendaItemId(null, produto.getId())) // ID será setado pelo Hibernate após persistência
+					.id(new VendaItemId(venda.getId(), produto.getId()))
 					.venda(venda)
 					.produto(produto)
 					.quantidade(vendaItemDTO.getQuantidadeVenda())
@@ -101,9 +118,7 @@ public class VendaService {
 
 		venda.setVendaItens(vendaItens);
 
-		Venda savedVenda = vendaRepository.save(venda);
-
-		return toResponseDTO(savedVenda);
+		return toResponseDTO(venda);
 	}
 
 	@Transactional
