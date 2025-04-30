@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
@@ -21,4 +22,5 @@ public class VendaResponseDTO {
 	private Long idCliente;
 	private LocalDate dataVenda;
 	private List<VendaItemDTO> vendaItemList;
+	private BigDecimal valorTotal;
 }
