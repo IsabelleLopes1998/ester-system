@@ -38,4 +38,8 @@ public class VendaItem {
 	@Column(nullable = false)
 	@UpdateTimestamp
 	private LocalDateTime updatedAt;
+
+	protected BigDecimal getValorTotal() {
+		return this.preçoUnitario.multiply(BigDecimal.valueOf(this.quantidade));
+	}
 }

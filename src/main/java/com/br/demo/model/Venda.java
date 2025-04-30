@@ -1,10 +1,12 @@
 package com.br.demo.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -47,5 +49,11 @@ public class Venda {
 	@Column(nullable = false)
 	@UpdateTimestamp
 	private LocalDateTime updatedAt;
+
+	public BigDecimal getValorTotal() {
+		return vendaItens.stream()
+				.map(VendaItem::getValorTotal)
+				.reduce(BigDecimal.ZERO, BigDecimal::add);
+	}
 
 }

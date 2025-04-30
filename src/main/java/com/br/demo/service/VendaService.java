@@ -24,6 +24,7 @@ public class VendaService {
 	private final VendaItemRepository vendaItemRepository;
 	private final HistoricoValorRepository historicoValorRepository;
 	private final MovimentacaoEstoqueService movimentacaoEstoqueService;
+	private final MovimentacaoEstoqueRepository movimentacaoEstoqueRepository;
 
 	public VendaService(
 			VendaRepository vendaRepository,
@@ -32,7 +33,8 @@ public class VendaService {
 			ClienteRepository clienteRepository,
 			ProdutoRepository produtoRepository,
 			HistoricoValorRepository historicoValorRepository,
-			MovimentacaoEstoqueService movimentacaoEstoqueService
+			MovimentacaoEstoqueService movimentacaoEstoqueService,
+			MovimentacaoEstoqueRepository movimentacaoEstoqueRepository
 	) {
 		this.vendaRepository = vendaRepository;
 		this.pagamentoRepository = pagamentoRepository;
@@ -41,6 +43,7 @@ public class VendaService {
 		this.vendaItemRepository = vendaItemRepository;
 		this.historicoValorRepository = historicoValorRepository;
 		this.movimentacaoEstoqueService = movimentacaoEstoqueService;
+		this.movimentacaoEstoqueRepository = movimentacaoEstoqueRepository;
 	}
 	
 	public List<VendaResponseDTO> getAllVendas() {
@@ -54,10 +57,11 @@ public class VendaService {
 					   .map(this::toResponseDTO)
 					   .orElse(null);
 	}
-
+	//TODO: Temos que por a logica de pagamento aqui.
 	@Transactional
 	public VendaResponseDTO createVenda(VendaRequestDTO dto, Usuario usuario) {
-		Cliente cliente = clienteRepository.findById(dto.getIdCliente()).orElse(null);
+		Cliente cliente = clienteRepository.findById(dto.getIdCliente())
+		.orElseThrow(() -> new IllegalArgumentException("Cliente não encontrado: " + dto.getIdCliente()));
 		Pagamento pagamento = pagamentoRepository.findById(dto.getIdPagamento()).orElse(null);
 
 		if (usuario == null || cliente == null || pagamento == null) {
@@ -120,85 +124,30 @@ public class VendaService {
 
 		return toResponseDTO(venda);
 	}
-
+	//TODO: se quiser adicionar o delete logico para ficar tudo registrado, seria aqui.
 	@Transactional
 	public VendaResponseDTO updateVenda(UUID id, VendaRequestDTO dto) {
 		Venda venda = vendaRepository.findById(id)
 				.orElseThrow(() -> new IllegalArgumentException("Venda não encontrada: " + id));
 
-		Cliente cliente = clienteRepository.findById(dto.getIdCliente())
-				.orElseThrow(() -> new IllegalArgumentException("Cliente não encontrado: " + dto.getIdCliente()));
-
-		Pagamento pagamento = pagamentoRepository.findById(dto.getIdPagamento())
-				.orElseThrow(() -> new IllegalArgumentException("Pagamento não encontrado: " + dto.getIdPagamento()));
-
-		boolean dataAlterada = !venda.getData().equals(dto.getData());
-		venda.setData(dto.getData());
-		venda.setCliente(cliente);
-		venda.setPagamento(pagamento);
-
-		Set<UUID> idsProdutosNoDTO = dto.getVendaItemList().stream()
-				.map(VendaItemDTO::getProdutoId)
-				.collect(Collectors.toSet());
-
-		List<VendaItem> vendaItensExistentes = venda.getVendaItens();
-
-		for (Iterator<VendaItem> iterator = vendaItensExistentes.iterator(); iterator.hasNext(); ) {
-			VendaItem vendaItem = iterator.next();
-			if (!idsProdutosNoDTO.contains(vendaItem.getProduto().getId())) {
-				Produto produto = vendaItem.getProduto();
-				produto.setQuantidadeEstoque(produto.getQuantidadeEstoque() + vendaItem.getQuantidade());
-				produtoRepository.save(produto);
-
-				vendaItemRepository.delete(vendaItem);
-				iterator.remove();
-			}
-		}
-
-		for (VendaItemDTO vendaItemDTO : dto.getVendaItemList()) {
-			Produto produto = produtoRepository.findById(vendaItemDTO.getProdutoId())
-					.orElseThrow(() -> new IllegalArgumentException("Produto não encontrado: " + vendaItemDTO.getProdutoId()));
-
-			Optional<VendaItem> vendaItemExistenteOpt = vendaItensExistentes.stream()
-					.filter(vendaItem -> vendaItem.getProduto().getId().equals(vendaItemDTO.getProdutoId()))
-					.findFirst();
-
-			VendaItem vendaItem;
-
-			if (vendaItemExistenteOpt.isPresent()) {
-				vendaItem = vendaItemExistenteOpt.get();
-
-				produto.setQuantidadeEstoque(produto.getQuantidadeEstoque() + vendaItem.getQuantidade());
-			} else {
-				vendaItem = new VendaItem();
-				vendaItem.setId(new VendaItemId(venda.getId(), produto.getId()));
-				vendaItem.setVenda(venda);
-				vendaItem.setProduto(produto);
-				vendaItensExistentes.add(vendaItem);
-			}
-
-			vendaItem.setQuantidade(vendaItemDTO.getQuantidadeVenda());
-			produto.setQuantidadeEstoque(produto.getQuantidadeEstoque() - vendaItemDTO.getQuantidadeVenda());
-
-			produtoRepository.save(produto);
-
-			if (dataAlterada || !vendaItemExistenteOpt.isPresent()) {
-				HistoricoValor precoVigente = historicoValorRepository.findPrecoVigenteByProdutoAndData(produto.getId(), venda.getData())
-						.orElseThrow(() -> new IllegalArgumentException("Preço não encontrado para o produto na data informada"));
-
-				vendaItem.setPreçoUnitario(precoVigente.getPreçoUnitario());
-			}
-
-			vendaItemRepository.save(vendaItem);
-		}
-
-		venda = vendaRepository.save(venda);
-
 		return toResponseDTO(venda);
 	}
 
+	@Transactional
 	public void deleteVenda(UUID id) {
-		vendaRepository.deleteById(id);
+		Venda venda = vendaRepository.findById(id)
+				.orElseThrow(() -> new IllegalArgumentException("Venda não encontrada: " + id));
+
+		for (VendaItem item : venda.getVendaItens()) {
+			Produto produto = item.getProduto();
+			produto.setQuantidadeEstoque(produto.getQuantidadeEstoque() + item.getQuantidade());
+			produtoRepository.save(produto);
+		}
+
+		List<MovimentacaoEstoque> movimentacoes = movimentacaoEstoqueRepository.findByVendaId(venda.getId());
+		movimentacaoEstoqueRepository.deleteAll(movimentacoes);
+
+		vendaRepository.delete(venda);
 	}
 
 	private VendaResponseDTO toResponseDTO(Venda venda) {
@@ -218,6 +167,7 @@ public class VendaService {
 										.collect(Collectors.toList())
 								: null
 				)
+				.valorTotal(venda.getValorTotal())
 				.build();
 	}
 }
