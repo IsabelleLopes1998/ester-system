@@ -20,7 +20,6 @@ public class CompraService {
     private final CompraRepository compraRepository;
     private final CompraItemRepository compraItemRepository;
     private final ProdutoRepository produtoRepository;
-    private final PagamentoRepository pagamentoRepository;
     private final MovimentacaoEstoqueService movimentacaoEstoqueService;
     
     public CompraService(
@@ -33,22 +32,16 @@ public class CompraService {
         this.compraRepository = compraRepository;
         this.compraItemRepository = compraItemRepository;
         this.produtoRepository = produtoRepository;
-        this.pagamentoRepository = pagamentoRepository;
         this.movimentacaoEstoqueService = movimentacaoEstoqueService;
     }
 
     @Transactional
     public CompraResponseDTO criarCompra(CompraRequestDTO dto, Usuario usuario) {
-        Pagamento pagamento = pagamentoRepository.findById(dto.getPagamentoId())
-                .orElseThrow(() -> new IllegalArgumentException("Pagamento não encontrado para produto " + dto.getPagamentoId()));
-
 
         Compra compra = Compra.builder()
                 .data(dto.getData())
                 .fornecedor(dto.getFornecedor())
                 .usuario(usuario)
-                .pagamento(pagamento)
-                .quantidadeParcelas(dto.getQuantidadeParcelas())
                 .build();
         compra = compraRepository.save(compra);
 
@@ -89,8 +82,6 @@ public class CompraService {
                 .data(compra.getData())
                 .fornecedor(compra.getFornecedor())
                 .nomeUsuario(compra.getUsuario().getNome())
-                .formaPagamento(compra.getPagamento().getFormaPagamento().toString())
-                .quantidadeParcelas(compra.getQuantidadeParcelas())
                 .itens(itensResponse)
                 .build();
     }
@@ -111,8 +102,6 @@ public class CompraService {
                             .data(compra.getData())
                             .fornecedor(compra.getFornecedor())
                             .nomeUsuario(compra.getUsuario().getNome())
-                            .formaPagamento(compra.getPagamento().getFormaPagamento().toString())
-                            .quantidadeParcelas(compra.getQuantidadeParcelas())
                             .itens(itensResponse)
                             .build();
                 })
