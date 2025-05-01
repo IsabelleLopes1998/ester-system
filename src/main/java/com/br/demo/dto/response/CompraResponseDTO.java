@@ -16,7 +16,5 @@ public class CompraResponseDTO {
     private LocalDate data;
     private String fornecedor;
     private String nomeUsuario;
-    private String formaPagamento;
-    private Integer quantidadeParcelas;
     private List<CompraItemResponseDTO> itens;
 }

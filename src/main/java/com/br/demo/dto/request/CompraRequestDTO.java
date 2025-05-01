@@ -15,7 +15,5 @@ import java.util.UUID;
 public class CompraRequestDTO {
     private LocalDate data;
     private String fornecedor;
-    private UUID pagamentoId;
-    private Integer quantidadeParcelas;
     private List<CompraItemRequestDTO> itens;
 }
