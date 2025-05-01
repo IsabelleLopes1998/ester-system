@@ -1,6 +1,7 @@
 package com.br.demo.dto.response;
 
 import com.br.demo.dto.VendaItemDTO;
+import com.br.demo.enums.StatusVenda;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -23,4 +24,5 @@ public class VendaResponseDTO {
 	private LocalDate dataVenda;
 	private List<VendaItemDTO> vendaItemList;
 	private BigDecimal valorTotal;
+	private StatusVenda statusVenda;
 }
