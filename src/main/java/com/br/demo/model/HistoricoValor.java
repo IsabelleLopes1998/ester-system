@@ -1,6 +1,7 @@
 package com.br.demo.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -29,7 +30,8 @@ public class HistoricoValor {
 
     @Column(nullable = false)
     @NotNull(message = "Preço é obrigatório.")
-    private BigDecimal preçoUnitario;
+    @DecimalMin(value = "0.01", message = "O valor não pode ser menor que 0.01.")
+    private BigDecimal precoUnitario;
 
     @ManyToOne
     @JoinColumn(name = "id_produto", nullable = false)

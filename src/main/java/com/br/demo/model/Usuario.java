@@ -1,6 +1,8 @@
 package com.br.demo.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -27,21 +29,29 @@ public class Usuario implements UserDetails {
     private UUID id;
 
     @Column(nullable = false, length = 100)
+    @NotNull(message = "Nome é obrigatório.")
+    @Size(min = 3, max = 100, message = "Nome deve ter entre 3 e 100 caracteres.")
     private String nome;
 
     @Column(nullable = false, unique = true, length = 11)
+    @NotNull(message = "CPF é obrigatório.")
     private String cpf;
 
     @Column(nullable = false)
+    @NotNull(message = "Data de nascimento é obrigatória.")
     private LocalDate dataNascimento;
 
     @Column(nullable = false, unique = true, length = 120)
-    private String username; // vai funcionar como email
+    @NotNull(message = "Nome de usuário é obrigatório.")
+    private String username;
 
     @Column(nullable = false, length = 60)
+    @NotNull(message = "Senha é obrigatória.")
+    @Size(min = 6, message = "A senha deve ter pelo menos 6 caracteres.")
     private String senha;
 
     @Column(nullable = false, length = 15)
+    @NotNull(message = "Telefone principal é obrigatório.")
     private String telefonePrincipal;
 
     @Column(length = 15)
@@ -49,11 +59,13 @@ public class Usuario implements UserDetails {
 
     @ManyToOne
     @JoinColumn(name = "id_cargo", nullable = false)
+    @NotNull(message = "Cargo é obrigatório.")
     private Cargo cargo;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority("ROLE_USER")); // ou algo vindo de cargo
+        // Aqui, você pode dinamicamente mapear os cargos para permissões
+        return List.of(new SimpleGrantedAuthority("ROLE_" + cargo.getNome().toUpperCase()));
     }
 
     @Override
@@ -74,10 +86,23 @@ public class Usuario implements UserDetails {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
 
-    @Override public boolean isAccountNonExpired() { return true; }
-    @Override public boolean isAccountNonLocked() { return true; }
-    @Override public boolean isCredentialsNonExpired() { return true; }
-    @Override public boolean isEnabled() { return true; }
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
 }
-

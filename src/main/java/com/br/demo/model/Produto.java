@@ -1,6 +1,9 @@
 package com.br.demo.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -21,33 +24,33 @@ public class Produto {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
+    @NotBlank(message = "Nome do produto é obrigatório.")
     @Column(nullable = false, length = 60)
     private String nome;
 
-    @Column(nullable = false, precision = 10, scale = 2)
-    private BigDecimal preçoVigente;
+    @NotNull(message = "Preço vigente é obrigatório.")
+    @DecimalMin(value = "0.01", message = "O preço não pode ser menor que 0.01.")
+    @Column(name = "preco_vigente", nullable = false, precision = 10, scale = 2)
+    private BigDecimal precoVigente;
 
-    @Column(nullable = false)
+    @NotNull(message = "Quantidade em estoque é obrigatória.")
+    @Column(name = "quantidade_estoque", nullable = false)
     private Integer quantidadeEstoque;
 
-//    @ManyToOne
-//    @JoinColumn(name = "id_usuario", nullable = false)
-//    private Usuario usuario;
-
+    @NotNull(message = "Categoria é obrigatória.")
     @ManyToOne
     @JoinColumn(name = "id_categoria", nullable = false)
     private Categoria categoria;
 
     @ManyToOne
-    @JoinColumn(name = "id_subcategoria", nullable = true)
+    @JoinColumn(name = "id_subcategoria")
     private Subcategoria subcategoria;
 
-    @Column(name = "created_at", nullable = false, updatable = false)
     @CreationTimestamp
+    @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
-    @Column(nullable = false)
     @UpdateTimestamp
+    @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
-
 }
