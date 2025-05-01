@@ -38,11 +38,6 @@ VALUES
   (1, 'Maria da Silva', '12345678900', '1985-05-10', 'maria@gmail.com', 'Rua A', '100', 'ap 101', '30100-000'),
   (2, 'João Pereira', '98765432100', '1990-08-22', 'joao@gmail.com', 'Rua B', '200', '', '30200-000');
 
--- Pagamentos
-INSERT INTO pagamento (id, forma_pagamento)
-VALUES
-  (uuid_generate_v4(), 'CARTAO_CREDITO'),
-  (uuid_generate_v4(), 'DINHEIRO');
 
 -- Categorias
 INSERT INTO categoria (id, nome, descricao)
@@ -60,7 +55,7 @@ VALUES
 
 
 -- Produtos
-INSERT INTO produto (id, nome, preço_vigente, quantidade_estoque, id_categoria, id_subcategoria)
+INSERT INTO produto (id, nome, preco_vigente, quantidade_estoque, id_categoria, id_subcategoria)
 VALUES
   (uuid_generate_v4(), 'Anel de Ouro', 350.00, 0,
     (SELECT id FROM categoria WHERE nome = 'Categoria Joias'),
@@ -76,7 +71,7 @@ VALUES
         (SELECT id FROM subcategoria WHERE nome = 'Pulseiras'));
 
 -- Histórico de valores dos produtos
-INSERT INTO historico_valor (id, data, preço_unitario, id_produto)
+INSERT INTO historico_valor (id, data, preco_unitario, id_produto)
 VALUES
   (uuid_generate_v4(), '2025-01-01', 350.00, (SELECT id FROM produto WHERE nome = 'Anel de Ouro')),
   (uuid_generate_v4(), '2025-02-01', 180.00, (SELECT id FROM produto WHERE nome = 'Pulseira de Prata')),
