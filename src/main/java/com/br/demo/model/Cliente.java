@@ -32,8 +32,8 @@ public class Cliente {
     private String nome;
 
     @Column(nullable = false, unique = true)
-    @NotNull(message = "CPF é obrigatório.")
-    @Pattern(regexp = "\\d{3}\\.\\d{3}\\.\\d{3}-\\d{2}", message = "CPF deve seguir o formato XXX.XXX.XXX-XX.")
+    @NotNull(message = "CPF ou CNPJ é obrigatório.")
+    @Pattern(regexp = "\\d{3}\\.\\d{3}\\.\\d{3}-\\d{2}|\\d{2}\\.\\d{3}\\.\\d{3}/\\d{4}-\\d{2}", message = "CPF ou CNPJ deve seguir o formato XXX.XXX.XXX-XX ou XX.XXX.XXX/XXXX-XX.")
     private String cpf;
 
     @Column(nullable = false)
