@@ -29,7 +29,7 @@ public class HistoricoValorService {
                 .map(historicoValor -> new HistoricoValorResponseDTO(
                         historicoValor.getId(),
                         historicoValor.getData(),
-                        historicoValor.getPreçoUnitario(),
+                        historicoValor.getPrecoUnitario(),
                         historicoValor.getProduto().getNome()))
                 .collect(Collectors.toList());
     }
@@ -39,7 +39,7 @@ public class HistoricoValorService {
                 .map(historicoValor -> new HistoricoValorResponseDTO(
                         historicoValor.getId(),
                         historicoValor.getData(),
-                        historicoValor.getPreçoUnitario(),
+                        historicoValor.getPrecoUnitario(),
                         historicoValor.getProduto().getNome()))
                 .orElse(null);
     }
@@ -54,7 +54,7 @@ public class HistoricoValorService {
 
         HistoricoValor historicoValor = HistoricoValor.builder()
                 .data(dto.getData())
-                .preçoUnitario(dto.getValor())
+                .precoUnitario(dto.getValor())
                 .produto(produto)
                 .build();
 
@@ -63,7 +63,7 @@ public class HistoricoValorService {
         return new HistoricoValorResponseDTO(
                 historicoValor.getId(),
                 historicoValor.getData(),
-                historicoValor.getPreçoUnitario(),
+                historicoValor.getPrecoUnitario(),
                 historicoValor.getProduto().getNome());
     }
 
@@ -73,7 +73,7 @@ public class HistoricoValorService {
         if (optional.isPresent()) {
             HistoricoValor historicoValor = optional.get();
             historicoValor.setData(dto.getData());
-            historicoValor.setPreçoUnitario(dto.getValor());
+            historicoValor.setPrecoUnitario(dto.getValor());
 
             Produto produto = produtoRepository.findById(dto.getProduto().getId()).orElse(null);
             if (produto != null) {
@@ -85,7 +85,7 @@ public class HistoricoValorService {
             return new HistoricoValorResponseDTO(
                     historicoValor.getId(),
                     historicoValor.getData(),
-                    historicoValor.getPreçoUnitario(),
+                    historicoValor.getPrecoUnitario(),
                     historicoValor.getProduto().getNome());
         }
         return null;

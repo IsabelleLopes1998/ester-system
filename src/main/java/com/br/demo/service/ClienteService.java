@@ -30,7 +30,9 @@ public class ClienteService {
                         cliente.getRua(),
                         cliente.getNumero(),
                         cliente.getComplemento(),
-                        cliente.getCep()))
+                        cliente.getCep(),
+                        cliente.getPrimeiroTelefone(),
+                        cliente.getSegundoTelefone()))
                 .collect(Collectors.toList());
     }
 
@@ -45,7 +47,9 @@ public class ClienteService {
                         cliente.getRua(),
                         cliente.getNumero(),
                         cliente.getComplemento(),
-                        cliente.getCep()))
+                        cliente.getCep(),
+                        cliente.getPrimeiroTelefone(),
+                        cliente.getSegundoTelefone()))
                 .orElse(null);
     }
 
@@ -59,6 +63,8 @@ public class ClienteService {
                 .numero(dto.getNumero())
                 .complemento(dto.getComplemento())
                 .cep(dto.getCep())
+                .primeiroTelefone(dto.getPrimeiroTelefone())
+                .segundoTelefone(dto.getSegundoTelefone())
                 .build();
 
         cliente = clienteRepository.save(cliente);
@@ -72,7 +78,9 @@ public class ClienteService {
                 cliente.getRua(),
                 cliente.getNumero(),
                 cliente.getComplemento(),
-                cliente.getCep());
+                cliente.getCep(),
+                cliente.getPrimeiroTelefone(),
+                cliente.getSegundoTelefone());
     }
 
     public ClienteResponseDTO atualizarCliente(Long id, ClienteRequestDTO dto) {
@@ -86,6 +94,8 @@ public class ClienteService {
             cliente.setRua(dto.getRua());
             cliente.setNumero(dto.getNumero());
             cliente.setComplemento(dto.getComplemento());
+            cliente.setPrimeiroTelefone(dto.getPrimeiroTelefone());
+            cliente.setSegundoTelefone(dto.getSegundoTelefone());
             cliente.setCep(dto.getCep());
             clienteRepository.save(cliente);
             return new ClienteResponseDTO(
@@ -97,7 +107,9 @@ public class ClienteService {
                     cliente.getRua(),
                     cliente.getNumero(),
                     cliente.getComplemento(),
-                    cliente.getCep());
+                    cliente.getCep(),
+                    cliente.getPrimeiroTelefone(),
+                    cliente.getSegundoTelefone());
         }
         return null;
     }

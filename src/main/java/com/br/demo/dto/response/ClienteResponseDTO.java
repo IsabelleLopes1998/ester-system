@@ -15,10 +15,12 @@ public class ClienteResponseDTO {
     private Long id;
     private String nome;
     private String cpf;
-    private LocalDate dateBirth;
+    private LocalDate dataNascimento;
     private String email;
     private String rua;
     private String numero;
     private String complemento;
     private String cep;
+    private String primeiroTelefone;
+    private String segundoTelefone;
 }

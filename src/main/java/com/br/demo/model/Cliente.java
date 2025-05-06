@@ -23,7 +23,7 @@ import java.time.LocalDateTime;
 public class Cliente {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false)
@@ -73,5 +73,13 @@ public class Cliente {
     @Column(nullable = false)
     @UpdateTimestamp
     private LocalDateTime updatedAt;
+
+    @Column(name = "primeiro_telefone", length = 15)
+    @Pattern(regexp = "\\(\\d{2}\\)\\s9\\d{4}-\\d{4}", message = "Telefone deve seguir o formato (XX) 9XXXX-XXXX")
+    private String primeiroTelefone;
+
+    @Column(name = "segundo_telefone", length = 15)
+    @Pattern(regexp = "\\(\\d{2}\\)\\s9\\d{4}-\\d{4}", message = "Telefone deve seguir o formato (XX) 9XXXX-XXXX")
+    private String segundoTelefone;
 
 }

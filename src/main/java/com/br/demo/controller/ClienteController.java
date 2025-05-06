@@ -3,6 +3,7 @@ package com.br.demo.controller;
 import com.br.demo.dto.request.ClienteRequestDTO;
 import com.br.demo.dto.response.ClienteResponseDTO;
 import com.br.demo.service.ClienteService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,16 +32,18 @@ public class ClienteController {
         }
 
         @PostMapping("/salvarCliente")
-        public ResponseEntity<ClienteResponseDTO> criarCliente(@RequestBody ClienteRequestDTO clienteRequestDTO) {
-            return ResponseEntity.ok(clienteService.criarCliente(clienteRequestDTO));
+        public ResponseEntity<ClienteResponseDTO> criarCliente(@RequestBody @Valid ClienteRequestDTO clienteRequestDTO) {
+            ClienteResponseDTO response = clienteService.criarCliente(clienteRequestDTO);
+            return ResponseEntity.status(201).body(response);
         }
 
         @PutMapping("/atualizarCliente/{id}")
-        public ResponseEntity<ClienteResponseDTO> atualizarCliente(@PathVariable Long id, @RequestBody ClienteRequestDTO clienteRequestDTO) {
+        public ResponseEntity<ClienteResponseDTO> atualizarCliente(@PathVariable Long id, @RequestBody @Valid ClienteRequestDTO clienteRequestDTO) {
             return ResponseEntity.ok(clienteService.atualizarCliente(id, clienteRequestDTO));
         }
 
-        @DeleteMapping("/excluirCliente/{id}")
+
+    @DeleteMapping("/excluirCliente/{id}")
         public ResponseEntity<Void> excluirCliente(@PathVariable Long id) {
             clienteService.excluirCliente(id);
             return ResponseEntity.noContent().build();

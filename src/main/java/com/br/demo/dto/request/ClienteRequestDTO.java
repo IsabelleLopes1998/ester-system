@@ -1,5 +1,6 @@
 package com.br.demo.dto.request;
 
+import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,4 +21,6 @@ public class ClienteRequestDTO {
     private String numero;
     private String complemento;
     private String cep;
+    private String primeiroTelefone;
+    private String segundoTelefone;
 }
