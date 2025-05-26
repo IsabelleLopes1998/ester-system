@@ -17,5 +17,4 @@ public class ProdutoRequestDTO {
     private BigDecimal valor;
     private Integer quantidadeEstoque;
     private UUID idCategoria;
-    private UUID idSubcategoria; // pode ser null
 }

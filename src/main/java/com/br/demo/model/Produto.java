@@ -47,10 +47,6 @@ public class Produto {
     @NotNull(message = "Usuário é obrigatório.")
     private Usuario usuario;
 
-    @ManyToOne
-    @JoinColumn(name = "id_subcategoria")
-    private Subcategoria subcategoria;
-
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;

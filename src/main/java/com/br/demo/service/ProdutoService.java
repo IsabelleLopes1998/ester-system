@@ -20,35 +20,32 @@ public class ProdutoService {
 
     private final ProdutoRepository produtoRepository;
     private final CategoriaRepository categoriaRepository;
-    private final SubcategoriaRepository subcategoriaRepository;
     private final HistoricoValorRepository historicoValorRepository;
     private final MovimentacaoEstoqueService movimentacaoEstoqueService;
     public ProdutoService(
             ProdutoRepository produtoRepository,
             CategoriaRepository categoriaRepository,
-            SubcategoriaRepository subcategoriaRepository,
             HistoricoValorRepository historicoValorRepository,
             MovimentacaoEstoqueService movimentacaoEstoqueService
     ) {
         this.produtoRepository = produtoRepository;
         this.categoriaRepository = categoriaRepository;
-        this.subcategoriaRepository = subcategoriaRepository;
         this.movimentacaoEstoqueService =  movimentacaoEstoqueService;
         this.historicoValorRepository = historicoValorRepository;
     }
-
+    
     public List<ProdutoResponseDTO> listarProdutos() {
         return produtoRepository.findAll().stream()
-                .map(produto -> new ProdutoResponseDTO(
-                        produto.getId(),
-                        produto.getNome(),
-                        produto.getPrecoVigente(),
-                        produto.getQuantidadeEstoque(),
-                        produto.getCategoria().getNome(),
-                        produto.getSubcategoria() != null ? produto.getSubcategoria().getNome() : null
-                ))
-                .collect(Collectors.toList());
+                       .map(produto -> new ProdutoResponseDTO(
+                               produto.getId(),
+                               produto.getNome(),
+                               produto.getPrecoVigente(),
+                               produto.getQuantidadeEstoque(),
+                               produto.getCategoria().getNome()
+                       ))
+                       .collect(Collectors.toList());
     }
+    
 
     public ProdutoResponseDTO buscarPorId(UUID id) {
         return produtoRepository.findById(id)
@@ -57,20 +54,14 @@ public class ProdutoService {
                         produto.getNome(),
                         produto.getPrecoVigente(),
                         produto.getQuantidadeEstoque(),
-                        produto.getCategoria().getNome(),
-                        produto.getSubcategoria() != null ? produto.getSubcategoria().getNome() : null
+                        produto.getCategoria().getNome()
                 ))
                 .orElse(null);
     }
 
     public ProdutoResponseDTO criarProduto(ProdutoRequestDTO dto, @AuthenticationPrincipal Usuario usuario) {
         Categoria categoria = categoriaRepository.findById(dto.getIdCategoria()).orElse(null);
-        Subcategoria subcategoria = null;
-
-        if (dto.getIdSubcategoria() != null) {
-            subcategoria = subcategoriaRepository.findById(dto.getIdSubcategoria()).orElse(null);
-        }
-
+        
         if (categoria == null || usuario == null) {
             return null;
         }
@@ -79,7 +70,6 @@ public class ProdutoService {
                 .precoVigente(dto.getValor())
                 .quantidadeEstoque(0)
                 .categoria(categoria)
-                .subcategoria(subcategoria)
                 .usuario(usuario)
                 .build();
 
@@ -99,8 +89,7 @@ public class ProdutoService {
                 produto.getNome(),
                 produto.getPrecoVigente(),
                 produto.getQuantidadeEstoque(),
-                produto.getCategoria().getNome(),
-                produto.getSubcategoria() != null ? produto.getSubcategoria().getNome() : null
+                produto.getCategoria().getNome()
         );
     }
 
@@ -114,15 +103,10 @@ public class ProdutoService {
             produto.setQuantidadeEstoque(dto.getQuantidadeEstoque());
 
             Categoria categoria = categoriaRepository.findById(dto.getIdCategoria()).orElse(null);
-            Subcategoria subcategoria = null;
-            if (dto.getIdSubcategoria() != null) {
-                subcategoria = subcategoriaRepository.findById(dto.getIdSubcategoria()).orElse(null);
-            }
 
             if (categoria != null) {
                 produto.setCategoria(categoria);
             }
-            produto.setSubcategoria(subcategoria);
 
             produtoRepository.save(produto);
 
@@ -131,8 +115,7 @@ public class ProdutoService {
                     produto.getNome(),
                     produto.getPrecoVigente(),
                     produto.getQuantidadeEstoque(),
-                    produto.getCategoria().getNome(),
-                    produto.getSubcategoria() != null ? produto.getSubcategoria().getNome() : null
+                    produto.getCategoria().getNome()
             );
         }
         return null;

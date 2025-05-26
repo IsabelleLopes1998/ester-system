@@ -1,5 +1,8 @@
 package com.br.demo.dto.response;
 
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
@@ -16,5 +19,5 @@ public class ProdutoResponseDTO {
     private BigDecimal valor;
     private Integer quantidadeEstoque;
     private String nomeCategoria;
-    private String nomeSubcategoria; // pode ser null
-}
+    }
+
