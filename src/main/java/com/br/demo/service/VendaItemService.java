@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -33,7 +34,7 @@ public class VendaItemService {
 	private MovimentacaoEstoqueService movimentacaoEstoqueService;
 
 	@Transactional
-	public List<VendaItem> criarItensVenda(Venda venda, List<VendaItemDTO> vendaItemDTOs, LocalDate dataVenda) {
+	public List<VendaItem> criarItensVenda(Venda venda, List<VendaItemDTO> vendaItemDTOs, LocalDateTime dataVenda) {
 		List<VendaItem> vendaItens = new ArrayList<>();
 
 		for (VendaItemDTO vendaItemDTO : vendaItemDTOs) {

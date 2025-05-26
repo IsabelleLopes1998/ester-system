@@ -4,6 +4,7 @@ import com.br.demo.enums.TipoMovimentacao;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Getter
@@ -12,8 +13,8 @@ import java.util.UUID;
 @AllArgsConstructor
 public class MovimentacaoEstoqueResponseDTO {
 	private UUID id;
-	private UUID idProduto;
-	private LocalDate data;
+	private String produtoName;
+	private LocalDateTime data;
 	private Integer quantidade;
 	private String observacao;
 	private TipoMovimentacao tipoMovimentacao;

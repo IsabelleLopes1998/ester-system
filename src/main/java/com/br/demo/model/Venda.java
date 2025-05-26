@@ -27,7 +27,7 @@ public class Venda {
 	private UUID id;
 
 	@Column(nullable = false)
-	private LocalDate data;
+	private LocalDateTime data;
 
 	@OneToMany(mappedBy = "venda", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<VendaItem> vendaItens;

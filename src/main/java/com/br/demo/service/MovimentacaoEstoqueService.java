@@ -83,7 +83,7 @@ public class MovimentacaoEstoqueService {
 	private MovimentacaoEstoqueResponseDTO toDTO(MovimentacaoEstoque item) {
 		return new MovimentacaoEstoqueResponseDTO(
 				item.getId(),
-				item.getProduto().getId(),
+				item.getProduto().getNome(),
 				item.getData(),
 				item.getQuantidade(),
 				item.getObservacao(),

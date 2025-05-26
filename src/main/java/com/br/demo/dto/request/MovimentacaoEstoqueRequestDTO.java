@@ -3,6 +3,7 @@ package com.br.demo.dto.request;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Getter
@@ -11,7 +12,7 @@ import java.util.UUID;
 @AllArgsConstructor
 public class MovimentacaoEstoqueRequestDTO {
 	private UUID idProduto;
-	private LocalDate data;
+	private LocalDateTime data;
 	private Integer quantidade;
 	private String observacao;
 	private String tipoAcerto;

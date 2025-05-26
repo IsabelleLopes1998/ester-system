@@ -29,8 +29,8 @@ INSERT INTO cargo (id, nome) VALUES (uuid_generate_v4(), 'USER');
 -- Usuários
 INSERT INTO usuario (id,nome, cpf, data_nascimento, username, senha, telefone_principal, telefone_secundario, id_cargo)
 VALUES
-  (uuid_generate_v4(), 'wicar pessoa', '12345678901', '1990-01-01', 'wicar@email.com', '$2a$10$dESjVmu/R9RuxHuvHzjZce/wd10N2WFjKYjNS0DU1ql50fgNxw/hG', '31987654321', '31912345678', (SELECT id FROM cargo WHERE nome = 'ADMIN')),
-  (uuid_generate_v4(), 'ian marcelino', '03721783311', '1990-01-01', 'ian@email.com', '$2a$10$dESjVmu/R9RuxHuvHzjZce/wd10N2WFjKYjNS0DU1ql50fgNxw/hG', '31987654321', '31912345678', (SELECT id FROM cargo WHERE nome = 'USER'));
+  (uuid_generate_v4(), 'wicar pessoa', '12345678901', '1990-01-01', 'wicar@email.com', '$2a$10$5fB45wvRP9P04kOvR5OQte6zZ7ZC8AIbJHqYXHX0BU0mXWiodDTZW', '31987654321', '31912345678', (SELECT id FROM cargo WHERE nome = 'ADMIN')),
+  (uuid_generate_v4(), 'ian marcelino', '03721783311', '1990-01-01', 'ian@email.com', '$2a$10$5fB45wvRP9P04kOvR5OQte6zZ7ZC8AIbJHqYXHX0BU0mXWiodDTZW', '31987654321', '31912345678', (SELECT id FROM cargo WHERE nome = 'USER'));
 
 -- Clientes
 INSERT INTO cliente (id, nome, cpf, data_nascimento, email, rua, numero, complemento, cep, primeiro_telefone, segundo_telefone)
@@ -51,29 +51,6 @@ VALUES
   (uuid_generate_v4(), 'Anéis', 'joias', (SELECT id FROM categoria WHERE nome = 'Categoria Joias')),
   (uuid_generate_v4(), 'Pulseiras', 'semi joias', (SELECT id FROM categoria WHERE nome = 'Categoria Semi Joias'));
 
--- Produtos
-INSERT INTO produto (id, nome, preco_vigente, quantidade_estoque, id_categoria, id_subcategoria)
-VALUES
-  (uuid_generate_v4(), 'Anel de Ouro', 350.00, 0,
-    (SELECT id FROM categoria WHERE nome = 'Categoria Joias'),
-    (SELECT id FROM subcategoria WHERE nome = 'Anéis')),
-  (uuid_generate_v4(), 'Pulseira de Prata', 180.00, 0,
-    (SELECT id FROM categoria WHERE nome = 'Categoria Semi Joias'),
-    (SELECT id FROM subcategoria WHERE nome = 'Pulseiras')),
-    (uuid_generate_v4(), 'Colar de Ouro', 340.00, 0,
-        (SELECT id FROM categoria WHERE nome = 'Categoria Joias'),
-        (SELECT id FROM subcategoria WHERE nome = 'Anéis')),
-      (uuid_generate_v4(), 'Colar de bijouteria', 180.00, 0,
-        (SELECT id FROM categoria WHERE nome = 'Categoria Semi Joias'),
-        (SELECT id FROM subcategoria WHERE nome = 'Pulseiras'));
-
--- Histórico de valores dos produtos
-INSERT INTO historico_valor (id, data, preco_unitario, id_produto)
-VALUES
-  (uuid_generate_v4(), '2025-01-01', 350.00, (SELECT id FROM produto WHERE nome = 'Anel de Ouro')),
-  (uuid_generate_v4(), '2025-02-01', 180.00, (SELECT id FROM produto WHERE nome = 'Pulseira de Prata')),
-  (uuid_generate_v4(), '2025-01-01', 340.00, (SELECT id FROM produto WHERE nome = 'Colar de Ouro')),
-  (uuid_generate_v4(), '2025-02-01', 180.00, (SELECT id FROM produto WHERE nome = 'Colar de bijouteria'));
 
 
 

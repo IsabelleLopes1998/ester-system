@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -18,6 +19,6 @@ public interface HistoricoValorRepository extends JpaRepository<HistoricoValor, 
             "LIMIT 1", nativeQuery = true)
     Optional<HistoricoValor> findPrecoVigenteByProdutoAndData(
             @Param("produtoId") UUID produtoId,
-            @Param("data") LocalDate data
+            @Param("data") LocalDateTime data
     );
 }

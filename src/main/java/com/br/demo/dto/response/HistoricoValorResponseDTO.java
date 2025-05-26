@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Getter
@@ -13,7 +14,7 @@ import java.util.UUID;
 @NoArgsConstructor
 public class HistoricoValorResponseDTO {
     private UUID id;
-    private LocalDate data;
+    private LocalDateTime data;
     private BigDecimal valor;
     private String nome;
 }

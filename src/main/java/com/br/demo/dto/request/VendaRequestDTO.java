@@ -5,6 +5,7 @@ import com.br.demo.enums.FormaPagamento;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 
@@ -14,7 +15,7 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 public class VendaRequestDTO {
-	private LocalDate data;
+	private LocalDateTime data;
 	private Long idCliente;
 	private List<VendaItemDTO> vendaItemList;
 	private FormaPagamento formaPagamento;

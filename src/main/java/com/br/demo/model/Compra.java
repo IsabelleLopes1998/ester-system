@@ -26,7 +26,7 @@ public class Compra {
     @NotNull(message = "A data da compra é obrigatória.")
     @PastOrPresent(message = "A data da compra não pode ser no futuro.")
     @Column(nullable = false)
-    private LocalDate data;
+    private LocalDateTime data;
 
     @OneToMany(mappedBy = "compra", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @NotEmpty(message = "A lista de itens da compra não pode estar vazia.")

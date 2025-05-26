@@ -26,7 +26,7 @@ public class HistoricoValor {
 
     @Column(nullable = false)
     @NotNull(message = "Data é obrigatório.")
-    private LocalDate data;
+    private LocalDateTime data;
 
     @Column(nullable = false)
     @NotNull(message = "Preço é obrigatório.")

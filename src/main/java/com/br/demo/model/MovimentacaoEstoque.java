@@ -32,9 +32,11 @@ public class MovimentacaoEstoque {
 	@NotNull(message = "Produto é obrigatório.")
 	private Produto produto;
 
+
+
 	@Column(nullable = false)
 	@NotNull(message = "Data é obrigatória.")
-	private LocalDate data;
+	private LocalDateTime data;
 
 	@Column(nullable = false)
 	@NotNull(message = "Quantidade é obrigatória.")

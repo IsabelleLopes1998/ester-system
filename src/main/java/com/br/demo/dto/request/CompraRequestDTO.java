@@ -4,6 +4,7 @@ package com.br.demo.dto.request;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 
@@ -13,7 +14,7 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class CompraRequestDTO {
-    private LocalDate data;
+    private LocalDateTime data;
     private String fornecedor;
     private List<CompraItemRequestDTO> itens;
 }
