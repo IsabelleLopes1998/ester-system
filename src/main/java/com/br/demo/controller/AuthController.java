@@ -37,5 +37,22 @@ public class AuthController {
         String token = jwtTokenProvider.gerarToken(usuario);
         return ResponseEntity.ok(new AuthResponseDTO(token));
     }
+
+
+    @GetMapping("/validate")
+    public ResponseEntity<String> validateToken(@RequestHeader("Authorization") String authHeader) {
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            return ResponseEntity.badRequest().body("Token ausente ou mal formatado");
+        }
+
+        String token = authHeader.replace("Bearer ", "");
+
+        if (jwtTokenProvider.isTokenValido(token)) {
+            String username = jwtTokenProvider.getUsernameFromToken(token);
+            return ResponseEntity.ok("Token válido para o usuário: " + username);
+        } else {
+            return ResponseEntity.status(401).body("Token inválido ou expirado");
+        }
+    }
 }
 
