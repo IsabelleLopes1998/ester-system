@@ -8,7 +8,7 @@ import com.br.demo.service.movimentacao.SaidaStrategy;
 public enum TipoMovimentacao {
 	ENTRADA(new EntradaStrategy()),
 	SAIDA(new SaidaStrategy()),
-	ENTRADA_MANUAL(new SaidaStrategy()),
+	ENTRADA_MANUAL(new EntradaStrategy()),
 	SAIDA_MANUAL(new SaidaStrategy());
 
 	private final MovimentacaoStrategy strategy;
