@@ -1,17 +1,15 @@
 package com.br.demo.service;
 
+import com.br.demo.dto.request.HistoricoValorRequestDTO;
+import com.br.demo.dto.request.MovimentacaoEstoqueRequestDTO;
 import com.br.demo.dto.request.ProdutoRequestDTO;
 import com.br.demo.dto.response.ProdutoResponseDTO;
-import com.br.demo.model.Categoria;
-import com.br.demo.model.Produto;
-import com.br.demo.model.Subcategoria;
-import com.br.demo.model.Usuario;
-import com.br.demo.repository.CategoriaRepository;
-import com.br.demo.repository.ProdutoRepository;
-import com.br.demo.repository.SubcategoriaRepository;
-import com.br.demo.repository.UsuarioRepository;
+import com.br.demo.model.*;
+import com.br.demo.repository.*;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -23,18 +21,20 @@ public class ProdutoService {
     private final ProdutoRepository produtoRepository;
     private final CategoriaRepository categoriaRepository;
     private final SubcategoriaRepository subcategoriaRepository;
-    private final UsuarioRepository usuarioRepository;
-
+    private final HistoricoValorRepository historicoValorRepository;
+    private final MovimentacaoEstoqueService movimentacaoEstoqueService;
     public ProdutoService(
             ProdutoRepository produtoRepository,
             CategoriaRepository categoriaRepository,
             SubcategoriaRepository subcategoriaRepository,
-            UsuarioRepository usuarioRepository
+            HistoricoValorRepository historicoValorRepository,
+            MovimentacaoEstoqueService movimentacaoEstoqueService
     ) {
         this.produtoRepository = produtoRepository;
         this.categoriaRepository = categoriaRepository;
         this.subcategoriaRepository = subcategoriaRepository;
-        this.usuarioRepository = usuarioRepository;
+        this.movimentacaoEstoqueService =  movimentacaoEstoqueService;
+        this.historicoValorRepository = historicoValorRepository;
     }
 
     public List<ProdutoResponseDTO> listarProdutos() {
@@ -63,29 +63,37 @@ public class ProdutoService {
                 .orElse(null);
     }
 
-    public ProdutoResponseDTO criarProduto(ProdutoRequestDTO dto) {
+    public ProdutoResponseDTO criarProduto(ProdutoRequestDTO dto, @AuthenticationPrincipal Usuario usuario) {
         Categoria categoria = categoriaRepository.findById(dto.getIdCategoria()).orElse(null);
-        //Usuario usuario = usuarioRepository.findById(dto.getIdUsuario()).orElse(null);
         Subcategoria subcategoria = null;
 
         if (dto.getIdSubcategoria() != null) {
             subcategoria = subcategoriaRepository.findById(dto.getIdSubcategoria()).orElse(null);
         }
 
-        if (categoria == null /*|| usuario == null*/) {
+        if (categoria == null || usuario == null) {
             return null;
         }
-        // apaguei o .usuario(usuario)
         Produto produto = Produto.builder()
                 .nome(dto.getNome())
                 .precoVigente(dto.getValor())
-                .quantidadeEstoque(dto.getQuantidadeEstoque())
+                .quantidadeEstoque(0)
                 .categoria(categoria)
                 .subcategoria(subcategoria)
+                .usuario(usuario)
                 .build();
 
         produto = produtoRepository.save(produto);
 
+        HistoricoValor historico = new HistoricoValor();
+        historico.setData(produto.getCreatedAt());
+        historico.setPrecoUnitario(produto.getPrecoVigente());
+        historico.setProduto(produto);
+
+        historicoValorRepository.save(historico);
+        System.out.println(produto.getQuantidadeEstoque());
+        MovimentacaoEstoqueRequestDTO movimentacaoEstoqueRequestDTO = new MovimentacaoEstoqueRequestDTO(produto.getId(),produto.getCreatedAt(),dto.getQuantidadeEstoque(),null,"ENTRADA_MANUAL",null,null);
+        movimentacaoEstoqueService.criar(movimentacaoEstoqueRequestDTO,usuario);
         return new ProdutoResponseDTO(
                 produto.getId(),
                 produto.getNome(),

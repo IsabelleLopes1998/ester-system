@@ -42,6 +42,11 @@ public class Produto {
     @JoinColumn(name = "id_categoria", nullable = false)
     private Categoria categoria;
 
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "id_usuario", nullable = false)
+    @NotNull(message = "Usuário é obrigatório.")
+    private Usuario usuario;
+
     @ManyToOne
     @JoinColumn(name = "id_subcategoria")
     private Subcategoria subcategoria;

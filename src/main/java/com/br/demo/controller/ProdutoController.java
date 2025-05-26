@@ -2,8 +2,10 @@ package com.br.demo.controller;
 
 import com.br.demo.dto.request.ProdutoRequestDTO;
 import com.br.demo.dto.response.ProdutoResponseDTO;
+import com.br.demo.model.Usuario;
 import com.br.demo.service.ProdutoService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -31,8 +33,8 @@ public class ProdutoController {
     }
 
     @PostMapping("/salvarProduto")
-    public ResponseEntity<ProdutoResponseDTO> criarProduto(@RequestBody ProdutoRequestDTO produtoRequestDTO) {
-        return ResponseEntity.ok(produtoService.criarProduto(produtoRequestDTO));
+    public ResponseEntity<ProdutoResponseDTO> criarProduto(@RequestBody ProdutoRequestDTO produtoRequestDTO, @AuthenticationPrincipal Usuario usuario) {
+        return ResponseEntity.ok(produtoService.criarProduto(produtoRequestDTO, usuario));
     }
 
     @PutMapping("/atualizarProduto/{id}")
