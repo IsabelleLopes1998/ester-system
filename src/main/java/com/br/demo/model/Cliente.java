@@ -41,7 +41,7 @@ public class Cliente {
     @Past(message = "A data de nascimento deve ser no passado.")
     private LocalDate dataNascimento;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     @NotNull(message = "E-mail é obrigatório.")
     @Email(message = "E-mail deve ser válido.")
     private String email;
