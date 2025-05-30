@@ -33,10 +33,10 @@ VALUES
   (uuid_generate_v4(), 'ian marcelino', '03721783311', '1990-01-01', 'ian@email.com', '$2a$10$5fB45wvRP9P04kOvR5OQte6zZ7ZC8AIbJHqYXHX0BU0mXWiodDTZW', '31987654321', '31912345678', (SELECT id FROM cargo WHERE nome = 'USER'));
 
 -- Clientes
-INSERT INTO cliente (id, nome, cpf, data_nascimento, email, rua, numero, complemento, cep, primeiro_telefone, segundo_telefone)
+INSERT INTO cliente ( nome, cpf, data_nascimento, email, rua, numero, complemento, cep, primeiro_telefone, segundo_telefone)
 VALUES
-  (1, 'Maria da Silva', '123.456.789-00', '1985-05-10', 'maria@gmail.com', 'Rua A', '100', 'ap 101', '30100-000', '(85) 98765-4321', '(85) 91234-5678'),
-  (2, 'João Pereira', '987.654.321-00', '1990-08-22', 'joao@gmail.com', 'Rua B', '200', '', '30200-000', '(85) 97654-3210', '(85) 91111-1111');
+  ('Maria da Silva', '123.456.789-00', '1985-05-10', 'maria@gmail.com', 'Rua A', '100', 'ap 101', '30100-000', '(85) 98765-4321', '(85) 91234-5678'),
+  ('João Pereira', '987.654.321-00', '1990-08-22', 'joao@gmail.com', 'Rua B', '200', '', '30200-000', '(85) 97654-3210', '(85) 91111-1111');
 
 -- Categorias
 INSERT INTO categoria (id, nome, descricao)
