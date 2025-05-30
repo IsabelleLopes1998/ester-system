@@ -52,23 +52,27 @@ public class ClienteService {
                         cliente.getSegundoTelefone()))
                 .orElse(null);
     }
-
+    
     public ClienteResponseDTO criarCliente(ClienteRequestDTO dto) {
+        System.out.println("Recebido DTO: " + dto); //debug
+        
         Cliente cliente = Cliente.builder()
-                .nome(dto.getNome())
-                .cpf(dto.getCpf())
-                .dataNascimento(dto.getDataNascimento())
-                .email(dto.getEmail())
-                .rua(dto.getRua())
-                .numero(dto.getNumero())
-                .complemento(dto.getComplemento())
-                .cep(dto.getCep())
-                .primeiroTelefone(dto.getPrimeiroTelefone())
-                .segundoTelefone(dto.getSegundoTelefone())
-                .build();
-
-        cliente = clienteRepository.save(cliente);
-
+                                  .nome(dto.getNome())
+                                  .cpf(dto.getCpf())
+                                  .dataNascimento(dto.getDataNascimento())
+                                  .email(dto.getEmail())
+                                  .rua(dto.getRua())
+                                  .numero(dto.getNumero())
+                                  .complemento(dto.getComplemento())
+                                  .cep(dto.getCep())
+                                  .primeiroTelefone(dto.getPrimeiroTelefone())
+                                  .segundoTelefone(dto.getSegundoTelefone())
+                                  .build();
+        
+        System.out.println("Cliente montado: " + cliente); // ← Adicionado para debug
+        
+        cliente = clienteRepository.save(cliente); // ← Aqui o erro acontece
+        
         return new ClienteResponseDTO(
                 cliente.getId(),
                 cliente.getNome(),
@@ -82,7 +86,8 @@ public class ClienteService {
                 cliente.getPrimeiroTelefone(),
                 cliente.getSegundoTelefone());
     }
-
+    
+    
     public ClienteResponseDTO atualizarCliente(Long id, ClienteRequestDTO dto) {
         Optional<Cliente> optional = clienteRepository.findById(id);
         if (optional.isPresent()) {
