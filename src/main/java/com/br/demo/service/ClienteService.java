@@ -2,6 +2,7 @@ package com.br.demo.service;
 
 import com.br.demo.dto.request.ClienteRequestDTO;
 import com.br.demo.dto.response.ClienteResponseDTO;
+import com.br.demo.exception.CpfDuplicadoException;
 import com.br.demo.model.Cliente;
 import com.br.demo.repository.ClienteRepository;
 import org.springframework.stereotype.Service;
@@ -54,7 +55,11 @@ public class ClienteService {
     }
     
     public ClienteResponseDTO criarCliente(ClienteRequestDTO dto) {
-        System.out.println("Recebido DTO: " + dto); //debug
+        System.out.println("Recebido DTO: " + dto);
+
+        if (clienteRepository.existsByCpf(dto.getCpf())) {
+            throw new CpfDuplicadoException("Já existe um cliente com esse CPF.");
+        }//debug
         
         Cliente cliente = Cliente.builder()
                                   .nome(dto.getNome())
