@@ -21,4 +21,7 @@ public interface HistoricoValorRepository extends JpaRepository<HistoricoValor, 
             @Param("produtoId") UUID produtoId,
             @Param("data") LocalDateTime data
     );
+
+
+    boolean existsByProdutoId(UUID id);
 }
