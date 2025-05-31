@@ -8,6 +8,7 @@ import com.br.demo.model.*;
 import com.br.demo.repository.*;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -121,7 +122,13 @@ public class ProdutoService {
         return null;
     }
 
+    @Transactional
     public void excluirProduto(UUID id) {
+        boolean possuiHistorico = historicoValorRepository.existsByProdutoId(id);
+
+        if (possuiHistorico) {
+            throw new IllegalStateException("Não é possível excluir este produto porque ele está vinculado a um histórico de valor");
+        }
         produtoRepository.deleteById(id);
     }
 }
