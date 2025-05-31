@@ -4,6 +4,7 @@ import com.br.demo.dto.request.ProdutoRequestDTO;
 import com.br.demo.dto.response.ProdutoResponseDTO;
 import com.br.demo.model.Usuario;
 import com.br.demo.service.ProdutoService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -44,7 +45,12 @@ public class ProdutoController {
 
     @DeleteMapping("/excluirProduto/{id}")
     public ResponseEntity<Void> excluirProduto(@PathVariable UUID id) {
-        produtoService.excluirProduto(id);
-        return ResponseEntity.noContent().build();
+        try {
+            produtoService.excluirProduto(id);
+            return ResponseEntity.noContent().build();
+        } catch (IllegalStateException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).build(); // ou HttpStatus.BAD_REQUEST
+        }
+
     }
 }
