@@ -14,4 +14,7 @@ public class CompraItemRequestDTO {
     private UUID produtoId;
     private BigDecimal valorUnitario;
     private Integer quantidadeVenda;
+
+
+
 }
