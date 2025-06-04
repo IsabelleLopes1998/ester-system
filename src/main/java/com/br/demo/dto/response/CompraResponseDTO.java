@@ -2,6 +2,7 @@ package com.br.demo.dto.response;
 
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -18,4 +19,5 @@ public class CompraResponseDTO {
     private String fornecedor;
     private String nomeUsuario;
     private List<CompraItemResponseDTO> itens;
+    private BigDecimal valorTotalDaCompra;
 }
