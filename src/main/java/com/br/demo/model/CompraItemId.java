@@ -15,7 +15,6 @@ import java.util.UUID;
 @Getter
 @Setter
 public class CompraItemId implements Serializable {
-
     private UUID produtoId;
     private UUID compraId;
 }
