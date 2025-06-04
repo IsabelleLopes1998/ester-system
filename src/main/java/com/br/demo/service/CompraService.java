@@ -8,6 +8,7 @@ import com.br.demo.dto.response.CompraResponseDTO;
 import com.br.demo.model.*;
 import com.br.demo.repository.*;
 import jakarta.transaction.Transactional;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,13 +17,15 @@ import java.util.stream.Collectors;
 
 @Service
 public class CompraService {
-
+    @Autowired
+    private CompraItemService compraItemService;
     private final CompraRepository compraRepository;
     private final CompraItemRepository compraItemRepository;
     private final ProdutoRepository produtoRepository;
     private final MovimentacaoEstoqueService movimentacaoEstoqueService;
     
     public CompraService(
+            CompraItemService compraItemService,
             CompraRepository compraRepository,
             CompraItemRepository compraItemRepository,
             ProdutoRepository produtoRepository,
@@ -33,41 +36,29 @@ public class CompraService {
         this.compraItemRepository = compraItemRepository;
         this.produtoRepository = produtoRepository;
         this.movimentacaoEstoqueService = movimentacaoEstoqueService;
+        this.compraItemService = compraItemService;
     }
 
     @Transactional
     public CompraResponseDTO criarCompra(CompraRequestDTO dto, Usuario usuario) {
+        System.out.println("Valor total recebido: " + dto.getValorTotalDaCompra());
 
         Compra compra = Compra.builder()
                 .data(dto.getData())
                 .fornecedor(dto.getFornecedor())
                 .usuario(usuario)
+                .valorTotalDaCompra(dto.getValorTotalDaCompra())
                 .build();
         compra = compraRepository.save(compra);
 
         final Compra compraFinal = compra;
 
-        List<CompraItem> compraItens = dto.getItens().stream().map(itemDTO -> {
-            Produto produto = produtoRepository.findById(itemDTO.getProdutoId()).orElseThrow();
+        List<CompraItem> compraItens = compraItemService.criarItensCompra(compraFinal, dto.getItens(), dto.getData());
+
+        compra.setCompraItens(compraItens);
 
 
-            MovimentacaoEstoqueRequestDTO novaMovimentacao = new MovimentacaoEstoqueRequestDTO(itemDTO.getProdutoId() ,dto.getData(), itemDTO.getQuantidadeVenda(), "COMPRA", "ENTRADA", compraFinal.getId(), null);
-            movimentacaoEstoqueService.criar(novaMovimentacao,usuario);
-            produtoRepository.save(produto);
-
-
-            CompraItemId compraItemId = new CompraItemId(produto.getId(), compraFinal.getId());
-            return CompraItem.builder()
-                    .id(compraItemId)
-                    .produto(produto)
-                    .compra(compraFinal)
-                    .quantidade(itemDTO.getQuantidadeVenda())
-                    .preçoUnitario(itemDTO.getValorUnitario())
-                    .build();
-        }).collect(Collectors.toList());
-
-        compraItemRepository.saveAll(compraItens);
-
+        compra = compraRepository.save(compra);
 
         List<CompraItemResponseDTO> itensResponse = compraItens.stream()
                 .map(item -> new CompraItemResponseDTO(
@@ -83,6 +74,7 @@ public class CompraService {
                 .fornecedor(compra.getFornecedor())
                 .nomeUsuario(compra.getUsuario().getNome())
                 .itens(itensResponse)
+                .valorTotalDaCompra(compra.getValorTotalDaCompra())
                 .build();
     }
 
@@ -103,6 +95,7 @@ public class CompraService {
                             .fornecedor(compra.getFornecedor())
                             .nomeUsuario(compra.getUsuario().getNome())
                             .itens(itensResponse)
+                            .valorTotalDaCompra(compra.getValorTotalDaCompra())
                             .build();
                 })
                 .collect(Collectors.toList());
