@@ -10,8 +10,6 @@ ALTER TABLE produto ALTER COLUMN created_at SET DEFAULT now();
 ALTER TABLE produto ALTER COLUMN updated_at SET DEFAULT now();
 ALTER TABLE categoria ALTER COLUMN created_at SET DEFAULT now();
 ALTER TABLE categoria ALTER COLUMN updated_at SET DEFAULT now();
-ALTER TABLE subcategoria ALTER COLUMN created_at SET DEFAULT now();
-ALTER TABLE subcategoria ALTER COLUMN updated_at SET DEFAULT now();
 ALTER TABLE historico_valor ALTER COLUMN created_at SET DEFAULT now();
 ALTER TABLE historico_valor ALTER COLUMN updated_at SET DEFAULT now();
 ALTER TABLE venda ALTER COLUMN created_at SET DEFAULT now();
@@ -46,10 +44,10 @@ VALUES
 
 -- Subcategorias
 -- Lembrando que estamos pegando os IDs das categorias criadas acima
-INSERT INTO subcategoria (id, nome, descricao, id_categoria)
-VALUES
-  (uuid_generate_v4(), 'Anéis', 'joias', (SELECT id FROM categoria WHERE nome = 'Categoria Joias')),
-  (uuid_generate_v4(), 'Pulseiras', 'semi joias', (SELECT id FROM categoria WHERE nome = 'Categoria Semi Joias'));
+--INSERT INTO subcategoria (id, nome, descricao, id_categoria)
+--VALUES
+  --(uuid_generate_v4(), 'Anéis', 'joias', (SELECT id FROM categoria WHERE nome = 'Categoria Joias')),
+  --(uuid_generate_v4(), 'Pulseiras', 'semi joias', (SELECT id FROM categoria WHERE nome = 'Categoria Semi Joias'));
 
 
 
