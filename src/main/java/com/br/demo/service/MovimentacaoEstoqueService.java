@@ -8,6 +8,7 @@ import com.br.demo.repository.CompraRepository;
 import com.br.demo.repository.MovimentacaoEstoqueRepository;
 import com.br.demo.repository.ProdutoRepository;
 import com.br.demo.repository.VendaRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -100,4 +101,10 @@ public class MovimentacaoEstoqueService {
 		
 		return toDTO(item);
 	}
+
+	@Transactional
+	public void desfazerMovimentacaoPorVenda(UUID vendaId) {
+		movimentacaoEstoqueRepository.deleteByVendaId(vendaId);
+	}
+
 }

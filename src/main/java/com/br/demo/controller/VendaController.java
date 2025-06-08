@@ -45,8 +45,8 @@ public class VendaController {
 	}
 	
 	@PutMapping("/{id}")
-	public VendaResponseDTO updateVenda(@PathVariable UUID id, @RequestBody VendaRequestDTO vendaRequestDTO){
-		return vendaService.updateVenda(id, vendaRequestDTO);
+	public VendaResponseDTO updateVenda(@PathVariable UUID id, @RequestBody VendaRequestDTO vendaRequestDTO, @AuthenticationPrincipal Usuario usuario){
+		return vendaService.updateVenda(id, vendaRequestDTO, usuario);
 	}
 }
 

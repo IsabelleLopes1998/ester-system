@@ -65,7 +65,7 @@ public class VendaService {
 				.build();
 		venda = vendaRepository.save(venda);
 
-		List<VendaItem> vendaItens = vendaItemService.criarItensVenda(venda, dto.getVendaItemList(), dto.getData());
+		List<VendaItem> vendaItens = vendaItemService.criarItensVenda(venda, dto.getVendaItemList(), dto.getData(), usuario);
 
 		venda.setVendaItens(vendaItens);
 
@@ -94,16 +94,50 @@ public class VendaService {
 
 		return toResponseDTO(venda);
 	}
+	/*@Transactional
+	public VendaResponseDTO updateVenda (UUID id, VendaRequestDTO dto){
+		Venda venda = vendaRepository.findById(id)
+				.orElseThrow(() -> new IllegalArgumentException("Venda não encontrada: " + id));
 
+		return toResponseDTO(venda);
+	}*/
 	@Transactional
-		public VendaResponseDTO updateVenda (UUID id, VendaRequestDTO dto){
-			Venda venda = vendaRepository.findById(id)
-					.orElseThrow(() -> new IllegalArgumentException("Venda não encontrada: " + id));
+	public VendaResponseDTO updateVenda(UUID id, VendaRequestDTO dto, Usuario usuario) {
+		Venda venda = vendaRepository.findById(id)
+				.orElseThrow(() -> new IllegalArgumentException("Venda não encontrada: " + id));
 
-			return toResponseDTO(venda);
+		Cliente cliente = clienteRepository.findById(dto.getIdCliente())
+				.orElseThrow(() -> new IllegalArgumentException("Cliente não encontrado: " + dto.getIdCliente()));
+
+		if (dto.getFormaPagamento() == null) {
+			throw new IllegalArgumentException("Forma de pagamento é obrigatória.");
 		}
 
-		@Transactional
+		venda.setData(dto.getData());
+		venda.setCliente(cliente);
+		venda.getPagamento().setFormaPagamento(dto.getFormaPagamento());
+
+		// 1. Desfaz movimentações antigas
+		movimentacaoEstoqueService.desfazerMovimentacaoPorVenda(venda.getId());
+
+		// 2. Remove itens antigos
+		venda.getVendaItens().clear();
+		vendaItemRepository.deleteByVendaId(venda.getId());
+
+		// 3. Cria e adiciona novos itens (inclui movimentação de estoque)
+		List<VendaItem> novosItens = vendaItemService.criarItensVenda(venda, dto.getVendaItemList(), dto.getData(), usuario);
+		venda.getVendaItens().addAll(novosItens);
+
+		venda.getPagamento().setValorTotal(venda.getValorTotal());
+
+		venda = vendaRepository.save(venda);
+		return toResponseDTO(venda);
+	}
+
+
+
+
+	@Transactional
 		public void deleteVenda (UUID id){
 			Venda venda = vendaRepository.findById(id)
 					.orElseThrow(() -> new IllegalArgumentException("Venda não encontrada: " + id));
@@ -142,7 +176,7 @@ public class VendaService {
 					.build();
 		}
 
-	private void confirmarVenda(Venda venda, Usuario usuario) {
+	/*private void confirmarVenda(Venda venda, Usuario usuario) {
 		for (VendaItem item : venda.getVendaItens()) {
 			item.setStatusVendaItem(StatusVendaItem.CONFIRMADO);
 
@@ -164,7 +198,19 @@ public class VendaService {
 		venda.setStatusVenda(StatusVenda.CONFIRMADO);
 
 		vendaRepository.save(venda);
+	}*/
+
+	private void confirmarVenda(Venda venda, Usuario usuario) {
+		for (VendaItem item : venda.getVendaItens()) {
+			item.setStatusVendaItem(StatusVendaItem.CONFIRMADO);
+		}
+
+		vendaItemRepository.saveAll(venda.getVendaItens());
+
+		venda.setStatusVenda(StatusVenda.CONFIRMADO);
+		vendaRepository.save(venda);
 	}
+
 
 
 	private void cancelarVenda(Venda venda) {

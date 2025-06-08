@@ -33,7 +33,7 @@ public class VendaItemService {
 	@Autowired
 	private MovimentacaoEstoqueService movimentacaoEstoqueService;
 
-	@Transactional
+	/*@Transactional
 	public List<VendaItem> criarItensVenda(Venda venda, List<VendaItemDTO> vendaItemDTOs, LocalDateTime dataVenda) {
 		List<VendaItem> vendaItens = new ArrayList<>();
 
@@ -62,5 +62,49 @@ public class VendaItemService {
 		}
 
 		return vendaItemRepository.saveAll(vendaItens);
+	}*/
+
+	@Transactional
+	public List<VendaItem> criarItensVenda(Venda venda, List<VendaItemDTO> vendaItemDTOs, LocalDateTime dataVenda, Usuario usuario) {
+		List<VendaItem> vendaItens = new ArrayList<>();
+
+		for (VendaItemDTO vendaItemDTO : vendaItemDTOs) {
+			Produto produto = produtoRepository.findById(vendaItemDTO.getProdutoId())
+					.orElseThrow(() -> new IllegalArgumentException("Produto não encontrado: " + vendaItemDTO.getProdutoId()));
+
+			if (produto.getQuantidadeEstoque() < vendaItemDTO.getQuantidadeVenda()) {
+				throw new IllegalArgumentException("Estoque insuficiente para o produto: " + produto.getNome());
+			}
+
+			HistoricoValor precoVigente = historicoValorRepository.findPrecoVigenteByProdutoAndData(
+					produto.getId(), dataVenda
+			).orElseThrow(() -> new IllegalArgumentException("Preço não encontrado para produto " + produto.getId()));
+
+			VendaItem vendaItem = VendaItem.builder()
+					.id(new VendaItemId(venda.getId(), produto.getId()))
+					.venda(venda)
+					.produto(produto)
+					.quantidade(vendaItemDTO.getQuantidadeVenda())
+					.preçoUnitario(precoVigente.getPrecoUnitario())
+					.statusVendaItem(StatusVendaItem.AGUARDANDO_PAGAMENTO)
+					.build();
+
+			vendaItens.add(vendaItem);
+
+			// ✅ Cria movimentação de saída para esse item
+			MovimentacaoEstoqueRequestDTO movimentacao = new MovimentacaoEstoqueRequestDTO();
+			movimentacao.setIdProduto(produto.getId());
+			movimentacao.setData(dataVenda);
+			movimentacao.setQuantidade(vendaItemDTO.getQuantidadeVenda());
+			movimentacao.setTipoAcerto("SAIDA");
+			movimentacao.setObservacao("Movimentação automática por venda");
+			movimentacao.setIdVenda(venda.getId());
+
+			movimentacaoEstoqueService.criar(movimentacao, usuario);
+		}
+
+		return vendaItemRepository.saveAll(vendaItens);
 	}
+
+
 }
