@@ -13,7 +13,7 @@ public class CorsConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
-                        .allowedOrigins("http://localhost:4200", "https://EsterSystem-web.vercel.app")
+                        .allowedOrigins("http://localhost:4200", "https://ester-system-front.vercel.app")
                         .allowedMethods("*")
                         .allowedHeaders("*")
                         .allowCredentials(true);
