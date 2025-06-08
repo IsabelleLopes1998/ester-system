@@ -17,4 +17,4 @@ RUN ./mvnw clean package -DskipTests
 CMD ["java", "-jar", "target/EsterSystem-0.0.1-SNAPSHOT.jar"]
 
 # Expõe a porta padrão da aplicação Spring Boot
-EXPOSE 8080
+EXPOSE 8080
